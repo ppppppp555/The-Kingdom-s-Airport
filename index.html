@@ -11,12 +11,10 @@
 
     <style>
         :root {
-            /* إعدادات الخطوط والألوان */
             --font-en: 'Cairo', sans-serif;
             --font-ar: 'Beirut', sans-serif; 
-            --sky-blue: #87CEEB;
             --deep-blue: #005A9C;
-            --cloud-white: #F4F9F9;
+            --cloud-white: rgba(255, 255, 255, 0.95);
             --text-dark: #333333;
         }
 
@@ -24,167 +22,159 @@
             margin: 0;
             padding: 0;
             font-family: var(--font-ar), var(--font-en);
-            background-color: var(--sky-blue);
+            /* التدرج اللوني للسماء */
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            background-attachment: fixed;
             color: var(--text-dark);
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* التحكم بظهور وإخفاء الشاشات */
-        .screen { display: none; height: 100vh; width: 100vw; }
-        .screen.active { display: flex; }
-        /* تم إزالة كلاس hidden من الـ CSS لمنع التعارض وتسهيل التنقل عبر الجافاسكريبت */
-
-        /* 1. شاشة التحميل الجديدة (تصميم السيارة) */
-        #loading-screen {
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to bottom, var(--deep-blue), var(--sky-blue));
-            color: white;
-            position: relative;
-        }
-        
-        /* حركة السيارة (اهتزاز خفيف كانها تعمل و تسير) */
-        .car-animation {
-            width: 140px;
-            animation: drive 0.5s infinite alternate;
-            z-index: 2;
-        }
-
-        @keyframes drive {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-4px); }
-        }
-
-        /* شريط التحميل الاحترافي */
-        .loading-bar {
-            width: 250px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            margin-top: 20px;
+        /* ☁️ تأثير الغيوم المتحركة بالـ CSS النقي ☁️ */
+        .clouds-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* في الخلفية دائماً */
+            pointer-events: none; /* حتى لا تمنع النقرات */
             overflow: hidden;
         }
 
-        .progress {
-            width: 0%;
-            height: 100%;
-            background: #ffffff;
-            border-radius: 10px;
-            /* مدة الشريط مطابقة لمدة الانتظار في الجافاسكريبت (3 ثواني) */
-            animation: loadProgress 3s ease-in-out forwards;
+        .cloud {
+            position: absolute;
+            background: #fff;
+            border-radius: 50px;
+            opacity: 0.6;
+            animation: drift linear infinite;
         }
 
-        @keyframes loadProgress {
-            0% { width: 0%; }
-            50% { width: 60%; }
-            100% { width: 100%; }
+        /* رسم أجزاء الغيمة */
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
         }
 
-        #loading-screen h2 { margin-top: 15px; font-size: 22px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+        .cloud::before { width: 50px; height: 50px; top: -20px; left: 10px; }
+        .cloud::after { width: 70px; height: 70px; top: -30px; right: 15px; }
 
-        /* 2. شاشة الدخول والتسجيل */
-        .auth-container {
-            margin: auto;
-            background: var(--cloud-white);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 400px;
+        /* أحجام وأماكن الغيوم */
+        .c1 { width: 120px; height: 40px; top: 10%; animation-duration: 35s; }
+        .c2 { width: 160px; height: 50px; top: 30%; animation-duration: 45s; transform: scale(1.2); opacity: 0.4; }
+        .c3 { width: 100px; height: 35px; top: 70%; animation-duration: 25s; }
+        .c4 { width: 140px; height: 45px; top: 50%; animation-duration: 50s; opacity: 0.5; transform: scale(1.5); }
+
+        @keyframes drift {
+            from { right: -200px; }
+            to { right: 110vw; }
         }
 
+        /* التحكم بالشاشات (الغيوم ستكون خلفها) */
+        .screen { display: none; height: 100vh; width: 100vw; position: relative; z-index: 1; }
+        .screen.active { display: flex; }
+
+        /* 1. شاشة التحميل */
+        #loading-screen { flex-direction: column; justify-content: center; align-items: center; color: white; }
+        .car-animation { width: 140px; animation: drive 0.5s infinite alternate; z-index: 2; }
+        @keyframes drive { 0% { transform: translateY(0px); } 100% { transform: translateY(-4px); } }
+
+        .loading-bar { width: 250px; height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 10px; margin-top: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .progress { width: 0%; height: 100%; background: #ffffff; border-radius: 10px; animation: loadProgress 3s ease-in-out forwards; }
+        @keyframes loadProgress { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
+
+        /* 2. شاشة الدخول */
+        .auth-container { margin: auto; background: var(--cloud-white); padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; backdrop-filter: blur(10px); }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .auth-tabs button { flex: 1; padding: 10px; border: none; cursor: pointer; border-radius: 5px; font-family: inherit; font-weight: bold; background: #e0e0e0; color: #555; transition: 0.3s; }
-        .auth-tabs button.active { background: var(--deep-blue); color: white; }
-        
+        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; background: rgba(0,0,0,0.05); color: #555; transition: 0.3s; }
+        .auth-tabs button.active { background: var(--deep-blue); color: white; box-shadow: 0 4px 10px rgba(0, 90, 156, 0.3); }
         .auth-form { display: none; flex-direction: column; gap: 15px; }
-        .auth-form.active { display: flex; } /* نتحكم بظهور الفورم عبر كلاس active */
+        .auth-form.active { display: flex; }
+        input { padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; outline: none; transition: 0.3s; background: rgba(255,255,255,0.8); }
+        input:focus { border-color: var(--deep-blue); box-shadow: 0 0 5px rgba(0, 90, 156, 0.2); }
+        .btn-primary { background: var(--deep-blue); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .btn-primary:hover { background: #004275; transform: translateY(-2px); }
 
-        input { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; outline: none; }
-        input:focus { border-color: var(--deep-blue); }
+        /* 3. لوحة التحكم */
+        #dashboard-screen { flex-direction: column; position: relative; }
         
-        .btn-primary {
-            background: var(--deep-blue);
-            color: white;
+        /* 🍔 زر القائمة المنسدلة */
+        .menu-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
+            font-size: 24px;
+            color: var(--deep-blue);
+            padding: 10px 15px;
+            border-radius: 10px;
             cursor: pointer;
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
             transition: 0.3s;
         }
-        .btn-primary:hover { background: #004275; }
-        .note { font-size: 12px; color: #666; text-align: center; }
+        .menu-btn:hover { background: #f0f8ff; }
 
-        /* 3. لوحة التحكم الرئيسية */
-        #dashboard-screen { flex-direction: row; }
-        
+        /* القائمة الجانبية (Sliding Menu) */
         .sidebar {
-            width: 250px;
+            position: fixed;
+            top: 0;
+            right: -300px; /* مخفية خارج الشاشة */
+            width: 260px;
             background: var(--cloud-white);
             height: 100vh;
             padding: 20px;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-        }
-        
-        .nav-links { list-style: none; padding: 0; margin-top: 30px; }
-        .nav-links li { margin-bottom: 15px; }
-        .nav-links a { text-decoration: none; color: var(--deep-blue); font-weight: bold; font-size: 18px; display: block; padding: 10px; border-radius: 8px; transition: 0.3s; }
-        .nav-links a:hover { background: rgba(0, 90, 156, 0.1); }
-
-        .content {
-            flex: 1;
-            padding: 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 101;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            backdrop-filter: blur(15px);
         }
-
-        /* مجسم الأرض 3D */
-        .model-container {
-            width: 100%;
-            height: 400px;
-            display: flex;
-            justify-content: center;
-        }
-        model-viewer {
-            width: 100%;
-            height: 100%;
-            background-color: transparent;
-        }
-
-        /* بطاقة المستخدم */
-        .user-profile-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 600px;
-            margin-top: -30px;
-            z-index: 10;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+        .sidebar.open { right: 0; } /* تظهر عند إضافة كلاس open */
         
-        .user-profile-card h3 { margin-top: 0; color: var(--deep-blue); }
+        .close-btn { align-self: flex-end; background: none; border: none; font-size: 24px; color: #ff4757; cursor: pointer; margin-bottom: 20px; }
         
-        .stats { display: flex; justify-content: space-between; margin-top: 15px; flex-wrap: wrap; gap: 10px; }
-        .stat-box { background: var(--sky-blue); padding: 10px; border-radius: 8px; font-weight: bold; flex: 1; text-align: center; }
-        .warning { background: #ff7675; color: white; }
+        .nav-section { margin-bottom: 25px; }
+        .nav-section h4 { color: #888; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; }
+        .nav-links li { margin-bottom: 10px; }
+        .nav-links a { text-decoration: none; color: var(--deep-blue); font-weight: bold; font-size: 16px; display: block; padding: 12px; border-radius: 10px; transition: 0.3s; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav-links a:hover { background: var(--deep-blue); color: white; transform: translateX(-5px); }
+
+        /* منطقة المحتوى */
+        .content { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 60px; }
+        
+        .model-container { width: 100%; height: 450px; display: flex; justify-content: center; }
+        model-viewer { width: 100%; height: 100%; }
+
+        .user-profile-card { background: var(--cloud-white); padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; margin-top: -40px; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
+        .user-profile-card h3 { margin-top: 0; color: var(--deep-blue); font-size: 22px; }
+        .stats { display: flex; justify-content: space-between; margin-top: 15px; flex-wrap: wrap; gap: 15px; }
+        .stat-box { background: white; padding: 15px; border-radius: 12px; font-weight: bold; flex: 1; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-bottom: 3px solid #66a6ff; }
+        .warning { border-bottom-color: #ff7675; }
+        
+        /* تغطية الشاشة عند فتح القائمة */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99; backdrop-filter: blur(2px); }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen" class="screen active">
-        <img src="https://cdn-icons-png.flaticon.com/512/2951/2951111.png" alt="شعار السيارة" class="car-animation">
-        
-        <div class="loading-bar">
-            <div class="progress"></div>
-        </div>
+    <div class="clouds-container">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+        <div class="cloud c4"></div>
+    </div>
 
-        <h2>جاري تشغيل المحرك للانطلاق...</h2>
+    <div id="loading-screen" class="screen active">
+        <img src="https://cdn-icons-png.flaticon.com/512/2951/2951111.png" alt="السيارة" class="car-animation">
+        <div class="loading-bar"><div class="progress"></div></div>
+        <h2>جاري تشغيل المحرك...</h2>
     </div>
 
     <div id="auth-screen" class="screen">
@@ -193,36 +183,47 @@
                 <button onclick="toggleAuth('login')" class="active" id="tab-login">تسجيل دخول</button>
                 <button onclick="toggleAuth('signup')" id="tab-signup">إنشاء حساب</button>
             </div>
-
             <form id="form-login" class="auth-form active" onsubmit="handleLogin(event)">
                 <input type="tel" placeholder="رقم الجوال" required>
                 <input type="password" placeholder="كلمة السر" required>
                 <button type="submit" class="btn-primary">دخول</button>
             </form>
-
             <form id="form-signup" class="auth-form" onsubmit="handleSignup(event)">
                 <input type="text" placeholder="اللقب" required>
                 <input type="tel" placeholder="رقم الجوال" required>
                 <input type="password" placeholder="كلمة السر" required>
                 <button type="submit" class="btn-primary">طلب إنشاء حساب</button>
-                <p class="note">* سيتم مراجعة طلبك من قبل المشرف قبل التفعيل.</p>
             </form>
         </div>
     </div>
 
     <div id="dashboard-screen" class="screen">
         
-        <aside class="sidebar">
-            <ul class="nav-links">
-                <li><a href="#tickets">🎫 تذاكر السفر</a></li>
-                <li><a href="#packages">🧳 بكجات السفر</a></li>
-                <li><a href="#booking">🚗 حجز الرحلات</a></li>
-                <li><a href="#visited">📍 أماكن تمت زيارتها</a></li>
-            </ul>
+        <button class="menu-btn" onclick="toggleMenu()">☰ القائمة</button>
+        
+        <div class="overlay" id="menu-overlay" onclick="toggleMenu()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <button class="close-btn" onclick="toggleMenu()">✖</button>
+            
+            <div class="nav-section">
+                <h4>خدمات الحجز</h4>
+                <ul class="nav-links">
+                    <li><a href="#booking">🚗 حجز رحلة جديدة</a></li>
+                    <li><a href="#packages">🧳 بكجات السفر</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h4>سجلي الشخصي</h4>
+                <ul class="nav-links">
+                    <li><a href="#tickets">🎫 تذاكري الحالية</a></li>
+                    <li><a href="#visited">📍 أماكن زرتها</a></li>
+                </ul>
+            </div>
         </aside>
 
         <main class="content">
-            
             <div class="model-container">
                 <model-viewer src="https://modelviewer.dev/shared-assets/models/Earth.glb" 
                               auto-rotate camera-controls disable-zoom>
@@ -232,18 +233,17 @@
             <div class="user-profile-card">
                 <h3>اللقب: <span id="user-nickname">محمد</span></h3>
                 <p>رقم الجوال: <span id="user-phone">0500000000</span></p>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
                 <div class="stats">
-                    <div class="stat-box">السفرات: <br><span>12</span></div>
-                    <div class="stat-box">التذاكر: <br><span>3</span></div>
-                    <div class="stat-box warning">الإنذارات: <br><span>0</span></div>
+                    <div class="stat-box">السفرات<br><span>12</span></div>
+                    <div class="stat-box">التذاكر<br><span>3</span></div>
+                    <div class="stat-box warning">الإنذارات<br><span>0</span></div>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // 1. إزالة شاشة التحميل بعد 3 ثوانٍ وعرض شاشة الدخول بسلاسة
+        // التحميل والانتقال
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.remove('active');
@@ -251,7 +251,7 @@
             }, 3000); 
         });
 
-        // 2. دالة التبديل بين الدخول والتسجيل
+        // تبديل تسجيل الدخول وإنشاء الحساب
         function toggleAuth(type) {
             const loginForm = document.getElementById('form-login');
             const signupForm = document.getElementById('form-signup');
@@ -259,30 +259,33 @@
             const tabSignup = document.getElementById('tab-signup');
             
             if(type === 'login') {
-                loginForm.classList.add('active');
-                signupForm.classList.remove('active');
-                tabLogin.classList.add('active');
-                tabSignup.classList.remove('active');
+                loginForm.classList.add('active'); signupForm.classList.remove('active');
+                tabLogin.classList.add('active'); tabSignup.classList.remove('active');
             } else {
-                loginForm.classList.remove('active');
-                signupForm.classList.add('active');
-                tabSignup.classList.add('active');
-                tabLogin.classList.remove('active');
+                loginForm.classList.remove('active'); signupForm.classList.add('active');
+                tabSignup.classList.add('active'); tabLogin.classList.remove('active');
             }
         }
 
-        // 3. دالة محاكاة الدخول بنجاح والانتقال للوحة التحكم
+        // محاكاة الدخول
         function handleLogin(e) {
             e.preventDefault(); 
             document.getElementById('auth-screen').classList.remove('active');
             document.getElementById('dashboard-screen').classList.add('active');
         }
 
-        // 4. دالة محاكاة إرسال طلب إنشاء الحساب
         function handleSignup(e) {
             e.preventDefault();
-            alert("تم إرسال طلبك بنجاح. يرجى الانتظار حتى يتم قبوله من المشرف لتتمكن من الدخول.");
+            alert("تم إرسال طلبك بنجاح.");
             toggleAuth('login');
+        }
+
+        // دالة فتح وإغلاق القائمة الجانبية (Hamburger Menu)
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('menu-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
         }
     </script>
 </body>
