@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام حجز الرحلات وإدارة السفارة</title>
+    <title>نظام حجز الرحلات - المملكة</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
@@ -46,13 +46,13 @@
         /* شاشة الدخول */
         .auth-container { margin: auto; background: var(--cloud-white); padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; backdrop-filter: blur(10px); }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; background: rgba(0,0,0,0.05); transition: 0.3s; }
+        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; background: rgba(0,0,0,0.05); transition: 0.3s; font-family: inherit; }
         .auth-tabs button.active { background: var(--deep-blue); color: white; }
         .auth-form { display: none; flex-direction: column; gap: 15px; }
         .auth-form.active { display: flex; }
-        input, select { padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; outline: none; background: rgba(255,255,255,0.8); }
-        input:focus, select:focus { border-color: var(--deep-blue); }
-        .btn-primary { background: var(--deep-blue); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        input, select, textarea { padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; outline: none; background: rgba(255,255,255,0.8); width: 100%; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: var(--deep-blue); }
+        .btn-primary { background: var(--deep-blue); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; font-family: inherit; width: 100%; }
         .btn-primary:disabled { background: #95a5a6; cursor: not-allowed; }
 
         /* القائمة الجانبية */
@@ -76,20 +76,31 @@
         /* بطاقة المستخدم والـ 3D */
         .model-container { width: 100%; height: 400px; display: flex; justify-content: center; }
         model-viewer { width: 100%; height: 100%; }
-        .user-profile-card { background: var(--cloud-white); padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; margin-top: -20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .user-profile-card { background: var(--cloud-white); padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; margin-top: -20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;}
         .stats { display: flex; justify-content: space-between; margin-top: 15px; gap: 10px; text-align: center; }
         .stat-box { background: white; padding: 15px; border-radius: 12px; font-weight: bold; flex: 1; border-bottom: 3px solid #66a6ff; }
         
-        /* البطاقات الإدارية */
+        /* البطاقات الإدارية والديناميكية */
         .page-title { color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.3); margin-bottom: 20px; text-align: center; }
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; }
-        .profile-card { background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; }
+        .profile-card { background: rgba(255,255,255,0.95); padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .profile-card:hover { transform: translateY(-5px); }
         .avatar-placeholder { width: 100px; height: 100px; background: #e0e0e0; border-radius: 50%; margin: 0 auto 15px; border: 3px solid var(--deep-blue); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; }
         .profile-card h3 { margin: 0 0 5px; color: var(--deep-blue); }
         .profile-card p { margin: 0; color: #666; font-size: 14px; }
-        .role-badge { display: inline-block; background: var(--deep-blue); color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
-        .btn-action { margin-top: 15px; background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; width: 100%; font-family: inherit; }
+        .btn-action { margin-top: 15px; background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; width: 100%; font-family: inherit; font-weight: bold; text-decoration: none; display: block; box-sizing: border-box;}
+        
+        /* جداول الطلبات */
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background: var(--deep-blue); color: white; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
+        .bg-pending { background: #f1c40f; color: #333; }
+        .bg-active { background: #2ecc71; }
+        .bg-rejected { background: #e74c3c; }
+
     </style>
 </head>
 <body>
@@ -118,7 +129,7 @@
             </form>
             
             <form id="form-signup" class="auth-form" onsubmit="handleSignup(event)">
-                <input type="text" id="signup-name" placeholder="اللقب" required>
+                <input type="text" id="signup-name" placeholder="اللقب (مثال: محمد)" required>
                 <input type="tel" id="signup-phone" placeholder="رقم الجوال" required>
                 <input type="password" id="signup-pass" placeholder="كلمة السر" required>
                 <select id="signup-guild" required>
@@ -150,7 +161,7 @@
                 <h4>خدمات الحجز</h4>
                 <ul class="nav-links">
                     <li><a onclick="switchView('view-booking')">🚗 حجز رحلة جديدة</a></li>
-                    <li><a onclick="switchView('view-packages')">🧳 بكجات السفر</a></li>
+                    <li><a onclick="switchView('view-packages')">🧳 بكجات السفر المتاحة</a></li>
                     <li><a onclick="switchView('view-tickets')">🎫 تذاكري الحالية</a></li>
                 </ul>
             </div>
@@ -158,10 +169,12 @@
             <div class="nav-section">
                 <h4>الإدارة والتواصل</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-supervisors')">📞 أرقام المشرفين</a></li>
-                    <li id="nav-embassy" style="display: none;"><a onclick="switchView('view-embassy')">🏛️ إدارة السفارة</a></li>
+                    <li><a onclick="switchView('view-supervisors')">📞 المشرفين للتواصل</a></li>
+                    <li id="nav-embassy" style="display: none;"><a href="admin.html" target="_blank">🏛️ الدخول للإدارة العليا</a></li>
                 </ul>
             </div>
+            
+            <button class="btn-primary" style="margin-top:20px; background:#e74c3c;" onclick="location.reload()">تسجيل خروج</button>
         </aside>
 
         <main class="content">
@@ -171,7 +184,7 @@
                     <model-viewer src="https://modelviewer.dev/shared-assets/models/Earth.glb" auto-rotate camera-controls disable-zoom></model-viewer>
                 </div>
                 <div class="user-profile-card">
-                    <h3>اللقب: <span id="profile-nickname">...</span></h3>
+                    <h3>مرحباً، <span id="profile-nickname">...</span></h3>
                     <p>رقم الجوال: <span id="profile-phone">...</span></p>
                     <p style="font-weight:bold;">النقابة: <span id="profile-guild" style="color:#e67e22;">...</span></p>
                     <div class="stats">
@@ -184,49 +197,51 @@
 
             <div id="view-booking" class="view-section">
                 <h2 class="page-title">حجز رحلة جديدة</h2>
-                <div class="user-profile-card" style="margin-top:0;"><p>واجهة اختيار الوجهة ستكون هنا...</p></div>
+                <div class="user-profile-card" style="margin-top:0;">
+                    <form onsubmit="handleBooking(event)">
+                        <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">نوع الحجز:</label>
+                        <select id="book-type" required style="margin-bottom:15px;">
+                            <option value="تذكرة سفر">تذكرة سفر فردية</option>
+                            <option value="بكج سياحي">بكج سياحي متكامل</option>
+                        </select>
+                        
+                        <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">الوجهة والتفاصيل:</label>
+                        <textarea id="book-details" rows="4" placeholder="اكتب وجهتك أو اسم البكج الذي ترغب به هنا..." required style="margin-bottom:20px;"></textarea>
+                        
+                        <button type="submit" class="btn-primary" id="btn-book">إرسال طلب الحجز</button>
+                    </form>
+                </div>
             </div>
 
             <div id="view-packages" class="view-section">
                 <h2 class="page-title">بكجات السفر المتاحة</h2>
-                <div class="user-profile-card" style="margin-top:0;"><p>قائمة البكجات السياحية ستعرض هنا...</p></div>
+                <div class="cards-grid" id="packages-container">
+                    <p style="color:white; text-align:center; width:100%;">جاري تحميل البكجات...</p>
+                </div>
             </div>
 
             <div id="view-tickets" class="view-section">
-                <h2 class="page-title">تذاكري الحالية</h2>
-                <div class="user-profile-card" style="margin-top:0;"><p>لا توجد تذاكر فعالة حالياً.</p></div>
+                <h2 class="page-title">طلباتي وتذاكري</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>النوع</th>
+                                <th>التفاصيل</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-my-tickets">
+                            </tbody>
+                    </table>
+                </div>
             </div>
 
             <div id="view-supervisors" class="view-section">
-                <h2 class="page-title">أرقام المشرفين للتواصل</h2>
-                <div class="cards-grid">
-                    <div class="profile-card">
-                        <div class="avatar-placeholder"><img src="https://ui-avatars.com/api/?name=مشرف+1&background=005A9C&color=fff" alt="صورة المشرف"></div>
-                        <h3>أحمد</h3><p>مشرف الدعم الفني</p><button class="btn-action">تواصل واتساب</button>
+                <h2 class="page-title">تواصل مع المشرفين</h2>
+                <div class="cards-grid" id="supervisors-container">
                     </div>
-                    <div class="profile-card">
-                        <div class="avatar-placeholder"><img src="https://ui-avatars.com/api/?name=مشرف+2&background=87CEEB&color=fff" alt="صورة المشرف"></div>
-                        <h3>خالد</h3><p>مشرف الحجوزات</p><button class="btn-action">تواصل واتساب</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-embassy" class="view-section">
-                <h2 class="page-title">إدارة السفارة</h2>
-                <div class="cards-grid">
-                    <div class="profile-card" style="border: 2px solid #f1c40f;">
-                        <div class="avatar-placeholder"><img src="https://ui-avatars.com/api/?name=قائد+السفارة&background=f1c40f&color=fff" alt="القائد"></div>
-                        <h3>قائد السفارة</h3><span class="role-badge" style="background:#f1c40f; color:#333;">الرتبة الأعلى</span>
-                        <p style="margin-top:10px;">إدارة كل النظام والنقابات.</p>
-                        <button class="btn-action" style="background:#005A9C;">دخول لوحة القائد</button>
-                    </div>
-                    <div class="profile-card" style="border: 2px solid #e67e22;">
-                        <div class="avatar-placeholder"><img src="https://ui-avatars.com/api/?name=سفير+النقابة&background=e67e22&color=fff" alt="السفير"></div>
-                        <h3>سفير النقابة</h3><span class="role-badge" style="background:#e67e22;">رتبة إدارية</span>
-                        <p style="margin-top:10px;">قبول المسافرين لنقابتك.</p>
-                        <button class="btn-action" style="background:#005A9C;">دخول لوحة السفير</button>
-                    </div>
-                </div>
             </div>
 
         </main>
@@ -234,9 +249,11 @@
 
     <script>
         // ==========================================
-        // 🔴 تم تحديث الرابط الجديد هنا 🔴
+        // 🔴 الرابط الجديد والمحدث لقاعدة البيانات 🔴
         // ==========================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO9UjqMfIQxbpFhPTSf4vwm6rbm6Rqryg7eoIPqIG4nHHQWC582BMOqe2Zly-zDiAgOA/exec";
+        
+        let loggedInUserPhone = ""; // لحفظ رقم جوال المستخدم الحالي لاستخدامه في الطلبات
 
         // التحميل المبدئي
         window.addEventListener('load', () => {
@@ -249,15 +266,11 @@
         // تبديل النوافذ
         function toggleAuth(type) {
             if(type === 'login') {
-                document.getElementById('form-login').classList.add('active'); 
-                document.getElementById('form-signup').classList.remove('active');
-                document.getElementById('tab-login').classList.add('active'); 
-                document.getElementById('tab-signup').classList.remove('active');
+                document.getElementById('form-login').classList.add('active'); document.getElementById('form-signup').classList.remove('active');
+                document.getElementById('tab-login').classList.add('active'); document.getElementById('tab-signup').classList.remove('active');
             } else {
-                document.getElementById('form-login').classList.remove('active'); 
-                document.getElementById('form-signup').classList.add('active');
-                document.getElementById('tab-signup').classList.add('active'); 
-                document.getElementById('tab-login').classList.remove('active');
+                document.getElementById('form-login').classList.remove('active'); document.getElementById('form-signup').classList.add('active');
+                document.getElementById('tab-signup').classList.add('active'); document.getElementById('tab-login').classList.remove('active');
             }
         }
 
@@ -276,45 +289,43 @@
         }
 
         // ==========================================
-        // الاتصال بقاعدة البيانات (تسجيل الحساب)
+        // 1. إنشاء الحساب
         // ==========================================
         async function handleSignup(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-signup');
-            btn.innerText = "جاري إرسال الطلب...";
-            btn.disabled = true;
+            btn.innerText = "جاري إرسال الطلب..."; btn.disabled = true;
 
             const name = document.getElementById('signup-name').value;
             const phone = document.getElementById('signup-phone').value;
             const pass = document.getElementById('signup-pass').value;
             const guild = document.getElementById('signup-guild').value;
 
-            // الترتيب: 0:جوال, 1:سر, 2:لقب, 3:رتبة, 4:نقابة, 5:حالة, 6:سفرات, 7:تذاكر, 8:إنذارات
+            // الترتيب: جوال, سر, لقب, رتبة, نقابة, حالة, سفرات, تذاكر, إنذارات
             const newUserData = [phone, pass, name, "user", guild, "pending", 0, 0, 0];
 
             try {
+                // نرسل الـ action كـ add والـ table كـ Users ليتوافق مع الـ API الجديد
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(newUserData),
+                    body: JSON.stringify({ action: "add", table: "Users", data: newUserData }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
                 const result = await response.json();
                 if(result.status === "success") {
-                    alert("تم إرسال طلب الانضمام لنقابة " + guild + " بنجاح. يرجى انتظار موافقة السفير.");
+                    alert("تم إرسال طلب الانضمام لنقابة " + guild + " بنجاح. يرجى انتظار الموافقة.");
                     document.getElementById('form-signup').reset();
                     toggleAuth('login');
                 }
             } catch (error) {
-                alert("حدث خطأ في الاتصال بقاعدة البيانات.");
-                console.error(error);
+                alert("حدث خطأ في الاتصال.");
             } finally {
-                btn.innerText = "طلب الانضمام للنقابة";
-                btn.disabled = false;
+                btn.innerText = "طلب الانضمام للنقابة"; btn.disabled = false;
             }
         }
 
         // ==========================================
-        // الاتصال بقاعدة البيانات (تسجيل الدخول)
+        // 2. تسجيل الدخول وجلب البيانات الحية (Super API)
         // ==========================================
         async function handleLogin(e) {
             e.preventDefault();
@@ -322,58 +333,154 @@
             const phone = document.getElementById('login-phone').value;
             const pass = document.getElementById('login-pass').value;
 
-            btn.innerText = "جاري التحقق من البيانات...";
-            btn.disabled = true;
+            btn.innerText = "جاري مصادقة البيانات..."; btn.disabled = true;
 
             try {
-                const response = await fetch(SCRIPT_URL);
-                const rows = await response.json();
+                // جلب كل قواعد البيانات (مستخدمين، مشرفين، بكجات، طلبات) دفعة واحدة
+                const response = await fetch(SCRIPT_URL + "?admin=true");
+                const db = await response.json();
                 
                 let userFound = false;
                 let userData = null;
 
-                for (let i = 0; i < rows.length; i++) {
-                    if (rows[i][0] == phone && rows[i][1] == pass) {
+                for (let i = 0; i < db.users.length; i++) {
+                    if (db.users[i][0] == phone && db.users[i][1] == pass) {
                         userFound = true;
-                        userData = rows[i];
+                        userData = db.users[i];
                         break;
                     }
                 }
 
                 if (userFound) {
                     if (userData[5] === "pending") {
-                        alert("حسابك بانتظار موافقة السفير. يرجى المحاولة لاحقاً.");
+                        alert("حسابك بانتظار موافقة الإدارة أو السفير.");
                     } else if (userData[5] === "rejected") {
                         alert("عذراً، تم رفض طلب انضمامك.");
                     } else {
-                        // تحديث بيانات الملف الشخصي
+                        // حفظ جوال المستخدم للجلسة الحالية
+                        loggedInUserPhone = userData[0];
+
+                        // 1. تحديث الملف الشخصي
                         document.getElementById('profile-nickname').innerText = userData[2];
                         document.getElementById('profile-phone').innerText = userData[0];
                         document.getElementById('profile-guild').innerText = userData[4];
-                        document.getElementById('profile-guild').style.color = "#27ae60"; // أخضر عند القبول
-                        
+                        document.getElementById('profile-guild').style.color = "#27ae60"; 
                         document.getElementById('profile-flights').innerText = userData[6] || 0;
                         document.getElementById('profile-tickets').innerText = userData[7] || 0;
                         document.getElementById('profile-warnings').innerText = userData[8] || 0;
 
-                        // التحكم بصلاحيات الإدارة
+                        // إظهار رابط الإدارة للسفراء والقادة
                         if (userData[3] === "ambassador" || userData[3] === "leader") {
                             document.getElementById('nav-embassy').style.display = "block";
                         }
 
-                        // الدخول للوحة
+                        // 2. رسم البكجات المتاحة من قاعدة البيانات
+                        const pkgContainer = document.getElementById('packages-container');
+                        pkgContainer.innerHTML = '';
+                        let hasPackages = false;
+                        db.packages.forEach((pkg, i) => {
+                            if (i > 0 && pkg[0]) {
+                                hasPackages = true;
+                                pkgContainer.innerHTML += `
+                                <div class="profile-card">
+                                    <div style="width:100%; height:160px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
+                                        <img src="${pkg[1]}" style="width:100%; height:100%; object-fit:cover;" alt="صورة البكج">
+                                    </div>
+                                    <h3>${pkg[0]}</h3>
+                                    <p style="color:var(--deep-blue); font-weight:bold;">${pkg[2]}</p>
+                                    <button class="btn-action" onclick="switchView('view-booking')">احجز الآن</button>
+                                </div>`;
+                            }
+                        });
+                        if(!hasPackages) pkgContainer.innerHTML = '<p style="text-align:center; width:100%;">لا توجد بكجات متاحة حالياً.</p>';
+
+                        // 3. رسم المشرفين للتواصل
+                        const supContainer = document.getElementById('supervisors-container');
+                        supContainer.innerHTML = '';
+                        db.supervisors.forEach((sup, i) => {
+                            if (i > 0 && sup[0]) {
+                                supContainer.innerHTML += `
+                                <div class="profile-card">
+                                    <div class="avatar-placeholder"><img src="${sup[2]}" alt="المشرف"></div>
+                                    <h3>${sup[1]}</h3>
+                                    <p>${sup[3]}</p>
+                                    <a href="https://wa.me/${sup[0]}" target="_blank" class="btn-action">تواصل واتساب</a>
+                                </div>`;
+                            }
+                        });
+
+                        // 4. رسم طلبات المستخدم الحالية في جدول التذاكر
+                        const tixContainer = document.getElementById('tbody-my-tickets');
+                        tixContainer.innerHTML = '';
+                        let hasTickets = false;
+                        db.requests.forEach((req, i) => {
+                            // التحقق أن الطلب يخص رقم جوال المسافر الحالي
+                            if (i > 0 && req[1] == loggedInUserPhone) {
+                                hasTickets = true;
+                                let statusClass = req[4] === 'pending' ? 'pending' : (req[4] === 'active' ? 'active' : 'rejected');
+                                let statusText = req[4] === 'pending' ? 'انتظار' : (req[4] === 'active' ? 'مقبول' : 'مرفوض');
+                                
+                                tixContainer.innerHTML += `
+                                <tr>
+                                    <td><strong>${req[0]}</strong></td>
+                                    <td>${req[2]}</td>
+                                    <td>${req[3]}</td>
+                                    <td><span class="badge bg-${statusClass}">${statusText}</span></td>
+                                </tr>`;
+                            }
+                        });
+                        if(!hasTickets) tixContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد طلبات أو تذاكر حالية.</td></tr>';
+
+                        // 5. إخفاء الدخول وعرض لوحة التحكم
                         document.getElementById('auth-screen').classList.remove('active');
                         document.getElementById('dashboard-screen').classList.add('active');
                     }
                 } else {
-                    alert("رقم الجوال أو كلمة السر غير صحيحة.");
+                    alert("بيانات الدخول غير صحيحة.");
                 }
             } catch (error) {
-                alert("حدث خطأ في الاتصال بقاعدة البيانات.");
-                console.error(error);
+                alert("حدث خطأ في جلب البيانات.");
             } finally {
-                btn.innerText = "دخول";
-                btn.disabled = false;
+                btn.innerText = "دخول"; btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // 3. إرسال طلب حجز تذكرة / بكج
+        // ==========================================
+        async function handleBooking(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-book');
+            btn.innerText = "جاري إرسال الطلب..."; btn.disabled = true;
+
+            const reqType = document.getElementById('book-type').value;
+            const reqDetails = document.getElementById('book-details').value;
+            
+            // توليد رقم طلب عشوائي لتمييزه
+            const randomId = "REQ-" + Math.floor(Math.random() * 90000 + 10000); 
+
+            // بنية الطلب لجدول Requests: رقم الطلب، الجوال، النوع، التفاصيل، الحالة
+            const newRequestData = [randomId, loggedInUserPhone, reqType, reqDetails, "pending"];
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "add", table: "Requests", data: newRequestData }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                const result = await response.json();
+                if(result.status === "success") {
+                    alert("تم إرسال طلبك بنجاح! رقم الطلب: " + randomId + "\nسيتم مراجعته من قبل الإدارة قريباً.");
+                    document.getElementById('book-details').value = '';
+                    
+                    // تحويل المستخدم لرؤية طلباته
+                    // ملاحظة: لن يظهر الطلب في الجدول إلا بعد تحديث الصفحة (تسجيل الدخول مجدداً) لضمان القراءة من السيرفر.
+                    switchView('view-tickets'); 
+                }
+            } catch (error) {
+                alert("حدث خطأ أثناء إرسال الطلب.");
+            } finally {
+                btn.innerText = "إرسال طلب الحجز"; btn.disabled = false;
             }
         }
     </script>
