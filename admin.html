@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة القيادة العليا - السفارة</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #005A9C;
+            --secondary: #87CEEB;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --bg-light: #f4f7f6;
+            --text-dark: #2c3e50;
+        }
+
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg-light); color: var(--text-dark); }
+
+        /* شاشة الدخول للإدارة */
+        #login-screen { display: flex; height: 100vh; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { color: var(--primary); margin-bottom: 20px; }
+        input, select { width: 90%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-family: inherit; transition: 0.3s; }
+        button:hover { opacity: 0.9; }
+
+        /* لوحة التحكم الرئيسية */
+        #dashboard-screen { display: none; }
+        .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .stats-cards { display: flex; gap: 20px; padding: 20px; flex-wrap: wrap; }
+        .card { background: white; flex: 1; min-width: 200px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-right: 5px solid var(--primary); }
+        
+        /* تصميم الجدول الاحترافي */
+        .table-container { padding: 20px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background: var(--primary); color: white; }
+        tr:hover { background: #f9f9f9; }
+        
+        /* الشارات (Badges) */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; color: white; font-weight: bold; }
+        .bg-pending { background: var(--warning); color: #333; }
+        .bg-active { background: var(--success); }
+        .bg-rejected { background: var(--danger); }
+        .bg-leader { background: #8e44ad; }
+        .bg-ambassador { background: #e67e22; }
+        .bg-user { background: #95a5a6; }
+
+        /* أزرار الإجراءات */
+        .action-btn { padding: 6px 12px; margin: 2px; width: auto; font-size: 12px; border-radius: 5px; }
+        .btn-approve { background: var(--success); }
+        .btn-edit { background: var(--primary); }
+        .btn-delete { background: var(--danger); }
+
+        /* نافذة التعديل المنبثقة (Modal) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
+        .modal-content h3 { margin-top: 0; color: var(--primary); }
+        .form-row { display: flex; justify-content: space-between; gap: 10px; }
+        .form-row input { width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>🏛️ إدارة السفارة العليا</h2>
+            <form onsubmit="handleAdminLogin(event)">
+                <input type="tel" id="admin-phone" placeholder="رقم الجوال الخاص بالقائد" required>
+                <input type="password" id="admin-pass" placeholder="كلمة السر" required>
+                <button type="submit" id="btn-login">تسجيل الدخول للوحة القيادة</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-screen">
+        <div class="header">
+            <h2>مرحباً، قائد السفارة</h2>
+            <button onclick="location.reload()" style="width: auto; background: white; color: var(--primary);">تسجيل خروج</button>
+        </div>
+
+        <div class="stats-cards">
+            <div class="card" style="border-color: var(--primary);">إجمالي المستخدمين<h3 id="stat-total">0</h3></div>
+            <div class="card" style="border-color: var(--warning);">طلبات قيد الانتظار<h3 id="stat-pending">0</h3></div>
+            <div class="card" style="border-color: var(--success);">المسافرين النشطين<h3 id="stat-active">0</h3></div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>اللقب</th>
+                        <th>الجوال</th>
+                        <th>النقابة</th>
+                        <th>الرتبة</th>
+                        <th>الحالة</th>
+                        <th>السفرات</th>
+                        <th>التذاكر</th>
+                        <th>الإنذارات</th>
+                        <th>إجراءات الإدارة</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <tr><td colspan="9" style="text-align:center;">جاري جلب البيانات من القاعدة...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <h3>تعديل بيانات المستخدم</h3>
+            <input type="hidden" id="edit-phone-hidden">
+            <input type="hidden" id="edit-pass-hidden">
+            
+            <label>اللقب:</label>
+            <input type="text" id="edit-name">
+            
+            <div class="form-row">
+                <div>
+                    <label>الرتبة:</label>
+                    <select id="edit-role">
+                        <option value="user">مسافر</option>
+                        <option value="ambassador">سفير نقابة</option>
+                        <option value="leader">قائد سفارة</option>
+                    </select>
+                </div>
+                <div>
+                    <label>الحالة:</label>
+                    <select id="edit-status">
+                        <option value="pending">قيد الانتظار</option>
+                        <option value="active">نشط (مقبول)</option>
+                        <option value="rejected">مرفوض</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <input type="number" id="edit-flights" placeholder="السفرات">
+                <input type="number" id="edit-tickets" placeholder="التذاكر">
+                <input type="number" id="edit-warnings" placeholder="الإنذارات">
+            </div>
+
+            <button onclick="saveUserData()" class="btn-approve" style="margin-top: 15px;">حفظ التعديلات</button>
+            <button onclick="closeModal()" class="btn-delete" style="margin-top: 10px;">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🔴 تم تحديث الرابط الجديد هنا 🔴
+        // ==========================================
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRDDShZbsgofSuERtLhBH5izFJi0KWfNqXqM57keSvHfyCObt3yBtW5hqzle6bnphEJA/exec";
+        
+        let allUsersData = [];
+
+        // 1. تسجيل الدخول والتحقق من الرتبة (يجب أن يكون leader)
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const phone = document.getElementById('admin-phone').value;
+            const pass = document.getElementById('admin-pass').value;
+            const btn = document.getElementById('btn-login');
+            
+            btn.innerText = "جاري التحقق من الصلاحيات...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(SCRIPT_URL);
+                allUsersData = await response.json();
+                
+                let validAdmin = false;
+                for (let i = 0; i < allUsersData.length; i++) {
+                    // التحقق من رقم الجوال، وكلمة السر، والرتبة
+                    if (allUsersData[i][0] == phone && allUsersData[i][1] == pass) {
+                        if (allUsersData[i][3] === "leader") {
+                            validAdmin = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (validAdmin) {
+                    document.getElementById('login-screen').style.display = "none";
+                    document.getElementById('dashboard-screen').style.display = "block";
+                    renderUsersTable(); // بناء الجدول بالبيانات
+                } else {
+                    alert("عفواً، الدخول مسموح فقط لقائد السفارة العليا.");
+                }
+            } catch (error) {
+                alert("حدث خطأ في الاتصال بقاعدة البيانات.");
+            } finally {
+                btn.innerText = "تسجيل الدخول للوحة القيادة";
+                btn.disabled = false;
+            }
+        }
+
+        // 2. عرض البيانات في الجدول
+        function renderUsersTable() {
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = '';
+            
+            let pendingCount = 0;
+            let activeCount = 0;
+            let totalCount = 0;
+
+            allUsersData.forEach((user, index) => {
+                // تخطي الصف الأول إذا كان يحتوي على عناوين الأعمدة المكتوبة
+                if (index === 0 && (user[0] === "رقم الجوال" || isNaN(user[0]))) return;
+                if (!user[0]) return; // تخطي الصفوف الفارغة
+
+                totalCount++;
+                if (user[5] === "pending") pendingCount++;
+                if (user[5] === "active") activeCount++;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${user[2]}</strong></td>
+                    <td>${user[0]}</td>
+                    <td>${user[4]}</td>
+                    <td><span class="badge bg-${user[3]}">${user[3] === 'leader' ? 'قائد' : (user[3] === 'ambassador' ? 'سفير' : 'مسافر')}</span></td>
+                    <td><span class="badge bg-${user[5]}">${user[5] === 'pending' ? 'انتظار' : (user[5] === 'active' ? 'نشط' : 'مرفوض')}</span></td>
+                    <td>${user[6] || 0}</td>
+                    <td>${user[7] || 0}</td>
+                    <td>${user[8] || 0}</td>
+                    <td>
+                        ${user[5] === 'pending' ? `<button class="action-btn btn-approve" onclick="quickApprove('${user[0]}')">قبول</button>` : ''}
+                        <button class="action-btn btn-edit" onclick="openEditModal('${user[0]}')">تعديل</button>
+                        <button class="action-btn btn-delete" onclick="deleteUser('${user[0]}')">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // تحديث الإحصائيات العلوية
+            document.getElementById('stat-total').innerText = totalCount;
+            document.getElementById('stat-pending').innerText = pendingCount;
+            document.getElementById('stat-active').innerText = activeCount;
+        }
+
+        // 3. الموافقة السريعة على الطلب
+        async function quickApprove(phone) {
+            if(!confirm("هل أنت متأكد من قبول هذا المسافر؟")) return;
+            
+            // استخراج بيانات المستخدم المطلوبة
+            let user = allUsersData.find(u => u[0] == phone);
+            user[5] = "active"; // تغيير الحالة إلى نشط
+
+            await sendUpdateRequest(user);
+        }
+
+        // 4. نافذة التعديل الشاملة
+        function openEditModal(phone) {
+            let user = allUsersData.find(u => u[0] == phone);
+            
+            document.getElementById('edit-phone-hidden').value = user[0];
+            document.getElementById('edit-pass-hidden').value = user[1];
+            document.getElementById('edit-name').value = user[2];
+            document.getElementById('edit-role').value = user[3];
+            // تخطي النقابة (user[4]) لتبسيط التعديل، أو يمكنك إضافتها
+            document.getElementById('edit-status').value = user[5];
+            document.getElementById('edit-flights').value = user[6] || 0;
+            document.getElementById('edit-tickets').value = user[7] || 0;
+            document.getElementById('edit-warnings').value = user[8] || 0;
+
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        async function saveUserData() {
+            const phone = document.getElementById('edit-phone-hidden').value;
+            let user = allUsersData.find(u => u[0] == phone);
+
+            // تحديث المصفوفة بالقيم الجديدة
+            user[2] = document.getElementById('edit-name').value;
+            user[3] = document.getElementById('edit-role').value;
+            user[5] = document.getElementById('edit-status').value;
+            user[6] = document.getElementById('edit-flights').value;
+            user[7] = document.getElementById('edit-tickets').value;
+            user[8] = document.getElementById('edit-warnings').value;
+
+            closeModal();
+            await sendUpdateRequest(user);
+        }
+
+        // 5. دالة إرسال طلب التحديث لقاعدة البيانات
+        async function sendUpdateRequest(userDataArray) {
+            try {
+                const requestBody = {
+                    action: "update",
+                    phone: userDataArray[0],
+                    data: userDataArray
+                };
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
+                const result = await response.json();
+                if(result.status === "success") {
+                    alert(result.msg);
+                    renderUsersTable(); // إعادة رسم الجدول
+                }
+            } catch (error) {
+                alert("حدث خطأ أثناء التحديث.");
+                console.error(error);
+            }
+        }
+
+        // 6. حذف المستخدم نهائياً
+        async function deleteUser(phone) {
+            if(!confirm("تحذير: هل أنت متأكد من حذف هذا المستخدم نهائياً من قاعدة البيانات؟")) return;
+
+            try {
+                const requestBody = {
+                    action: "delete",
+                    phone: phone
+                };
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(requestBody),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
+                const result = await response.json();
+                if(result.status === "success") {
+                    alert("تم حذف المستخدم بنجاح.");
+                    // تحديث المصفوفة المحلية وإعادة رسم الجدول
+                    allUsersData = allUsersData.filter(u => u[0] != phone);
+                    renderUsersTable();
+                }
+            } catch (error) {
+                alert("حدث خطأ أثناء الحذف.");
+            }
+        }
+    </script>
+</body>
+</html>
