@@ -3,345 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة القيادة العليا - السفارة</title>
-    
+    <title>غرفة العمليات - إدارة السفارة العليا</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
             --primary: #005A9C;
-            --secondary: #87CEEB;
+            --secondary: #2c3e50;
+            --accent: #87CEEB;
             --danger: #e74c3c;
             --success: #2ecc71;
             --warning: #f1c40f;
-            --bg-light: #f4f7f6;
-            --text-dark: #2c3e50;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
         }
 
-        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg-light); color: var(--text-dark); }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--secondary); overflow-x: hidden; }
 
-        /* شاشة الدخول للإدارة */
+        /* شاشة الدخول */
         #login-screen { display: flex; height: 100vh; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
-        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 15px 30px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
         .login-box h2 { color: var(--primary); margin-bottom: 20px; }
-        input, select { width: 90%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
-        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-family: inherit; transition: 0.3s; }
-        button:hover { opacity: 0.9; }
+        input, select { width: 90%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; font-family: inherit; transition: 0.3s; }
+        .btn-main:hover { background: #004275; }
 
-        /* لوحة التحكم الرئيسية */
-        #dashboard-screen { display: none; }
-        .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .stats-cards { display: flex; gap: 20px; padding: 20px; flex-wrap: wrap; }
-        .card { background: white; flex: 1; min-width: 200px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-right: 5px solid var(--primary); }
+        /* هيكل لوحة التحكم (Sidebar & Content) */
+        #dashboard-screen { display: none; display: flex; height: 100vh; }
         
-        /* تصميم الجدول الاحترافي */
-        .table-container { padding: 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background: var(--primary); color: white; }
+        .sidebar { width: 250px; background: var(--secondary); color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; background: rgba(0,0,0,0.2); text-align: center; font-weight: bold; font-size: 18px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-links a { display: block; padding: 15px 20px; color: #ccc; text-decoration: none; transition: 0.3s; cursor: pointer; }
+        .nav-links a:hover, .nav-links a.active { background: var(--primary); color: white; border-right: 5px solid var(--accent); }
+        .logout-btn { background: var(--danger); color: white; border: none; padding: 15px; cursor: pointer; font-family: inherit; font-weight: bold; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .header { background: white; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        
+        /* الأقسام الداخلية */
+        .view-section { display: none; padding: 20px; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* التخطيط (Grid) للنماذج والجداول */
+        .admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        @media (max-width: 900px) { .admin-grid { grid-template-columns: 1fr; } }
+        
+        .admin-card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .admin-card h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+
+        /* الجداول */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: var(--bg); color: var(--secondary); }
         tr:hover { background: #f9f9f9; }
         
-        /* الشارات (Badges) */
-        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; color: white; font-weight: bold; }
+        .img-preview { width: 40px; height: 40px; border-radius: 5px; object-fit: cover; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; color: white; font-weight: bold; }
         .bg-pending { background: var(--warning); color: #333; }
         .bg-active { background: var(--success); }
         .bg-rejected { background: var(--danger); }
-        .bg-leader { background: #8e44ad; }
-        .bg-ambassador { background: #e67e22; }
-        .bg-user { background: #95a5a6; }
 
-        /* أزرار الإجراءات */
-        .action-btn { padding: 6px 12px; margin: 2px; width: auto; font-size: 12px; border-radius: 5px; }
-        .btn-approve { background: var(--success); }
-        .btn-edit { background: var(--primary); }
-        .btn-delete { background: var(--danger); }
-
-        /* نافذة التعديل المنبثقة (Modal) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
-        .modal-content h3 { margin-top: 0; color: var(--primary); }
-        .form-row { display: flex; justify-content: space-between; gap: 10px; }
-        .form-row input { width: 100%; }
+        .action-btn { padding: 5px 10px; margin: 2px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 12px; }
+        .btn-del { background: var(--danger); }
+        .btn-acc { background: var(--success); }
+        .btn-load { background: #95a5a6; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-box">
-            <h2>🏛️ إدارة السفارة العليا</h2>
+            <h2>🏛️ غرفة العمليات العليا</h2>
             <form onsubmit="handleAdminLogin(event)">
-                <input type="tel" id="admin-phone" placeholder="رقم الجوال الخاص بالقائد" required>
+                <input type="tel" id="admin-phone" placeholder="رقم جوال القائد" required>
                 <input type="password" id="admin-pass" placeholder="كلمة السر" required>
-                <button type="submit" id="btn-login">تسجيل الدخول للوحة القيادة</button>
+                <button type="submit" class="btn-main" id="btn-login">تأكيد الهوية والدخول</button>
             </form>
         </div>
     </div>
 
     <div id="dashboard-screen">
-        <div class="header">
-            <h2>مرحباً، قائد السفارة</h2>
-            <button onclick="location.reload()" style="width: auto; background: white; color: var(--primary);">تسجيل خروج</button>
-        </div>
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">إدارة السفارة</div>
+            <ul class="nav-links">
+                <li><a onclick="switchView('view-users')" class="active">👥 إدارة المسافرين والسفراء</a></li>
+                <li><a onclick="switchView('view-requests')">📩 طلبات التذاكر والسفر</a></li>
+                <li><a onclick="switchView('view-guilds')">🏰 إدارة النقابات</a></li>
+                <li><a onclick="switchView('view-packages')">🧳 إدارة البكجات</a></li>
+                <li><a onclick="switchView('view-supervisors')">📞 المشرفين والدعم</a></li>
+            </ul>
+            <button class="logout-btn" onclick="location.reload()">تسجيل خروج ✖</button>
+        </aside>
 
-        <div class="stats-cards">
-            <div class="card" style="border-color: var(--primary);">إجمالي المستخدمين<h3 id="stat-total">0</h3></div>
-            <div class="card" style="border-color: var(--warning);">طلبات قيد الانتظار<h3 id="stat-pending">0</h3></div>
-            <div class="card" style="border-color: var(--success);">المسافرين النشطين<h3 id="stat-active">0</h3></div>
-        </div>
+        <main class="main-content">
+            <div class="header">
+                <h2 id="page-title">إدارة المسافرين والسفراء</h2>
+                <button class="btn-main" style="width:auto;" onclick="fetchData()">🔄 تحديث البيانات</button>
+            </div>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>اللقب</th>
-                        <th>الجوال</th>
-                        <th>النقابة</th>
-                        <th>الرتبة</th>
-                        <th>الحالة</th>
-                        <th>السفرات</th>
-                        <th>التذاكر</th>
-                        <th>الإنذارات</th>
-                        <th>إجراءات الإدارة</th>
-                    </tr>
-                </thead>
-                <tbody id="users-tbody">
-                    <tr><td colspan="9" style="text-align:center;">جاري جلب البيانات من القاعدة...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="modal" id="edit-modal">
-        <div class="modal-content">
-            <h3>تعديل بيانات المستخدم</h3>
-            <input type="hidden" id="edit-phone-hidden">
-            <input type="hidden" id="edit-pass-hidden">
-            
-            <label>اللقب:</label>
-            <input type="text" id="edit-name">
-            
-            <div class="form-row">
-                <div>
-                    <label>الرتبة:</label>
-                    <select id="edit-role">
-                        <option value="user">مسافر</option>
-                        <option value="ambassador">سفير نقابة</option>
-                        <option value="leader">قائد سفارة</option>
-                    </select>
-                </div>
-                <div>
-                    <label>الحالة:</label>
-                    <select id="edit-status">
-                        <option value="pending">قيد الانتظار</option>
-                        <option value="active">نشط (مقبول)</option>
-                        <option value="rejected">مرفوض</option>
-                    </select>
+            <div id="view-users" class="view-section active">
+                <div class="admin-card">
+                    <h3>جدول المسافرين والسفراء</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>اللقب</th><th>الجوال</th><th>النقابة</th><th>الرتبة</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                            <tbody id="tbody-users"><tr><td colspan="6">جاري التحميل...</td></tr></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-row">
-                <input type="number" id="edit-flights" placeholder="السفرات">
-                <input type="number" id="edit-tickets" placeholder="التذاكر">
-                <input type="number" id="edit-warnings" placeholder="الإنذارات">
+            <div id="view-requests" class="view-section">
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>إضافة طلب (يدوي)</h3>
+                        <form onsubmit="addRecord(event, 'Requests', ['req-id', 'req-phone', 'req-type', 'req-details', 'req-status'])">
+                            <input type="text" id="req-id" placeholder="رقم الطلب (مثال: R-101)" required>
+                            <input type="tel" id="req-phone" placeholder="جوال المسافر" required>
+                            <select id="req-type">
+                                <option value="تذكرة">طلب تذكرة سفر</option>
+                                <option value="بكج">طلب بكج سياحي</option>
+                            </select>
+                            <input type="text" id="req-details" placeholder="تفاصيل الطلب" required>
+                            <select id="req-status">
+                                <option value="pending">قيد الانتظار</option>
+                                <option value="active">تمت الموافقة</option>
+                                <option value="rejected">مرفوض</option>
+                            </select>
+                            <button type="submit" class="btn-main">إضافة الطلب</button>
+                        </form>
+                    </div>
+                    <div class="admin-card">
+                        <h3>سجل الطلبات</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>رقم الطلب</th><th>الجوال</th><th>النوع</th><th>التفاصيل</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                                <tbody id="tbody-requests"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <button onclick="saveUserData()" class="btn-approve" style="margin-top: 15px;">حفظ التعديلات</button>
-            <button onclick="closeModal()" class="btn-delete" style="margin-top: 10px;">إلغاء</button>
-        </div>
+            <div id="view-guilds" class="view-section">
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>إضافة نقابة جديدة</h3>
+                        <form onsubmit="addRecord(event, 'Guilds', ['guild-name', 'guild-img'])">
+                            <input type="text" id="guild-name" placeholder="اسم النقابة (مثال: Night)" required>
+                            <input type="url" id="guild-img" placeholder="رابط صورة شعار النقابة (PNG/JPG)" required>
+                            <button type="submit" class="btn-main">حفظ النقابة</button>
+                        </form>
+                    </div>
+                    <div class="admin-card">
+                        <h3>النقابات الحالية</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>الشعار</th><th>اسم النقابة</th><th>إجراء</th></tr></thead>
+                                <tbody id="tbody-guilds"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-packages" class="view-section">
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>إضافة بكج سياحي</h3>
+                        <form onsubmit="addRecord(event, 'Packages', ['pkg-name', 'pkg-img', 'pkg-price'])">
+                            <input type="text" id="pkg-name" placeholder="اسم البكج (مثال: رحلة الصيف)" required>
+                            <input type="url" id="pkg-img" placeholder="رابط صورة البكج" required>
+                            <input type="text" id="pkg-price" placeholder="السعر أو التفاصيل (مثال: 1500 ذهبة)" required>
+                            <button type="submit" class="btn-main">حفظ البكج</button>
+                        </form>
+                    </div>
+                    <div class="admin-card">
+                        <h3>البكجات المتاحة</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>الصورة</th><th>اسم البكج</th><th>التفاصيل</th><th>إجراء</th></tr></thead>
+                                <tbody id="tbody-packages"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-supervisors" class="view-section">
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>إضافة مشرف</h3>
+                        <form onsubmit="addRecord(event, 'Supervisors', ['sup-phone', 'sup-name', 'sup-img', 'sup-role'])">
+                            <input type="tel" id="sup-phone" placeholder="رقم الجوال (مهم جداً)" required>
+                            <input type="text" id="sup-name" placeholder="اسم المشرف" required>
+                            <input type="url" id="sup-img" placeholder="رابط الصورة الشخصية" required>
+                            <input type="text" id="sup-role" placeholder="الوصف (مثال: مشرف حجوزات)" required>
+                            <button type="submit" class="btn-main">حفظ المشرف</button>
+                        </form>
+                    </div>
+                    <div class="admin-card">
+                        <h3>قائمة المشرفين</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>الصورة</th><th>الاسم</th><th>الجوال</th><th>الدور</th><th>إجراء</th></tr></thead>
+                                <tbody id="tbody-supervisors"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <script>
         // ==========================================
-        // 🔴 تم تحديث الرابط الجديد هنا 🔴
+        // 🔴 رابط قاعدة البيانات الجديد 🔴
         // ==========================================
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRDDShZbsgofSuERtLhBH5izFJi0KWfNqXqM57keSvHfyCObt3yBtW5hqzle6bnphEJA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO9UjqMfIQxbpFhPTSf4vwm6rbm6Rqryg7eoIPqIG4nHHQWC582BMOqe2Zly-zDiAgOA/exec";
         
-        let allUsersData = [];
+        let db = { users: [], guilds: [], packages: [], supervisors: [], requests: [] };
 
-        // 1. تسجيل الدخول والتحقق من الرتبة (يجب أن يكون leader)
+        // 1. التنقل بين الأقسام
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('page-title').innerText = event.target.innerText.substring(2); // إزالة الإيموجي من العنوان
+        }
+
+        // 2. تسجيل الدخول للقائد وجلب كل قواعد البيانات (Super API)
         async function handleAdminLogin(e) {
             e.preventDefault();
             const phone = document.getElementById('admin-phone').value;
             const pass = document.getElementById('admin-pass').value;
             const btn = document.getElementById('btn-login');
             
-            btn.innerText = "جاري التحقق من الصلاحيات...";
-            btn.disabled = true;
+            btn.innerText = "جاري التحقق وجلب البيانات المعقدة...";
+            btn.classList.add('btn-load');
 
             try {
-                const response = await fetch(SCRIPT_URL);
-                allUsersData = await response.json();
+                // استدعاء الرابط مع ?admin=true لجلب كل الجداول دفعة واحدة
+                const response = await fetch(SCRIPT_URL + "?admin=true");
+                db = await response.json();
                 
                 let validAdmin = false;
-                for (let i = 0; i < allUsersData.length; i++) {
-                    // التحقق من رقم الجوال، وكلمة السر، والرتبة
-                    if (allUsersData[i][0] == phone && allUsersData[i][1] == pass) {
-                        if (allUsersData[i][3] === "leader") {
-                            validAdmin = true;
-                            break;
-                        }
+                // فحص جدول المستخدمين بحثاً عن القائد
+                for (let i = 0; i < db.users.length; i++) {
+                    if (db.users[i][0] == phone && db.users[i][1] == pass && db.users[i][3] === "leader") {
+                        validAdmin = true; break;
                     }
                 }
 
                 if (validAdmin) {
                     document.getElementById('login-screen').style.display = "none";
-                    document.getElementById('dashboard-screen').style.display = "block";
-                    renderUsersTable(); // بناء الجدول بالبيانات
+                    document.getElementById('dashboard-screen').style.display = "flex";
+                    renderAllTables();
                 } else {
-                    alert("عفواً، الدخول مسموح فقط لقائد السفارة العليا.");
+                    alert("دخول مرفوض! تأكد من بياناتك وأن رتبتك 'leader' في شيت Users.");
                 }
             } catch (error) {
-                alert("حدث خطأ في الاتصال بقاعدة البيانات.");
-            } finally {
-                btn.innerText = "تسجيل الدخول للوحة القيادة";
-                btn.disabled = false;
-            }
-        }
-
-        // 2. عرض البيانات في الجدول
-        function renderUsersTable() {
-            const tbody = document.getElementById('users-tbody');
-            tbody.innerHTML = '';
-            
-            let pendingCount = 0;
-            let activeCount = 0;
-            let totalCount = 0;
-
-            allUsersData.forEach((user, index) => {
-                // تخطي الصف الأول إذا كان يحتوي على عناوين الأعمدة المكتوبة
-                if (index === 0 && (user[0] === "رقم الجوال" || isNaN(user[0]))) return;
-                if (!user[0]) return; // تخطي الصفوف الفارغة
-
-                totalCount++;
-                if (user[5] === "pending") pendingCount++;
-                if (user[5] === "active") activeCount++;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${user[2]}</strong></td>
-                    <td>${user[0]}</td>
-                    <td>${user[4]}</td>
-                    <td><span class="badge bg-${user[3]}">${user[3] === 'leader' ? 'قائد' : (user[3] === 'ambassador' ? 'سفير' : 'مسافر')}</span></td>
-                    <td><span class="badge bg-${user[5]}">${user[5] === 'pending' ? 'انتظار' : (user[5] === 'active' ? 'نشط' : 'مرفوض')}</span></td>
-                    <td>${user[6] || 0}</td>
-                    <td>${user[7] || 0}</td>
-                    <td>${user[8] || 0}</td>
-                    <td>
-                        ${user[5] === 'pending' ? `<button class="action-btn btn-approve" onclick="quickApprove('${user[0]}')">قبول</button>` : ''}
-                        <button class="action-btn btn-edit" onclick="openEditModal('${user[0]}')">تعديل</button>
-                        <button class="action-btn btn-delete" onclick="deleteUser('${user[0]}')">حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            // تحديث الإحصائيات العلوية
-            document.getElementById('stat-total').innerText = totalCount;
-            document.getElementById('stat-pending').innerText = pendingCount;
-            document.getElementById('stat-active').innerText = activeCount;
-        }
-
-        // 3. الموافقة السريعة على الطلب
-        async function quickApprove(phone) {
-            if(!confirm("هل أنت متأكد من قبول هذا المسافر؟")) return;
-            
-            // استخراج بيانات المستخدم المطلوبة
-            let user = allUsersData.find(u => u[0] == phone);
-            user[5] = "active"; // تغيير الحالة إلى نشط
-
-            await sendUpdateRequest(user);
-        }
-
-        // 4. نافذة التعديل الشاملة
-        function openEditModal(phone) {
-            let user = allUsersData.find(u => u[0] == phone);
-            
-            document.getElementById('edit-phone-hidden').value = user[0];
-            document.getElementById('edit-pass-hidden').value = user[1];
-            document.getElementById('edit-name').value = user[2];
-            document.getElementById('edit-role').value = user[3];
-            // تخطي النقابة (user[4]) لتبسيط التعديل، أو يمكنك إضافتها
-            document.getElementById('edit-status').value = user[5];
-            document.getElementById('edit-flights').value = user[6] || 0;
-            document.getElementById('edit-tickets').value = user[7] || 0;
-            document.getElementById('edit-warnings').value = user[8] || 0;
-
-            document.getElementById('edit-modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('edit-modal').classList.remove('active');
-        }
-
-        async function saveUserData() {
-            const phone = document.getElementById('edit-phone-hidden').value;
-            let user = allUsersData.find(u => u[0] == phone);
-
-            // تحديث المصفوفة بالقيم الجديدة
-            user[2] = document.getElementById('edit-name').value;
-            user[3] = document.getElementById('edit-role').value;
-            user[5] = document.getElementById('edit-status').value;
-            user[6] = document.getElementById('edit-flights').value;
-            user[7] = document.getElementById('edit-tickets').value;
-            user[8] = document.getElementById('edit-warnings').value;
-
-            closeModal();
-            await sendUpdateRequest(user);
-        }
-
-        // 5. دالة إرسال طلب التحديث لقاعدة البيانات
-        async function sendUpdateRequest(userDataArray) {
-            try {
-                const requestBody = {
-                    action: "update",
-                    phone: userDataArray[0],
-                    data: userDataArray
-                };
-
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(requestBody),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-                });
-
-                const result = await response.json();
-                if(result.status === "success") {
-                    alert(result.msg);
-                    renderUsersTable(); // إعادة رسم الجدول
-                }
-            } catch (error) {
-                alert("حدث خطأ أثناء التحديث.");
+                alert("فشل الاتصال بقاعدة البيانات.");
                 console.error(error);
+            } finally {
+                btn.innerText = "تأكيد الهوية والدخول";
+                btn.classList.remove('btn-load');
             }
         }
 
-        // 6. حذف المستخدم نهائياً
-        async function deleteUser(phone) {
-            if(!confirm("تحذير: هل أنت متأكد من حذف هذا المستخدم نهائياً من قاعدة البيانات؟")) return;
+        // 3. تحديث وجلب البيانات يدوياً
+        async function fetchData() {
+            try {
+                const response = await fetch(SCRIPT_URL + "?admin=true");
+                db = await response.json();
+                renderAllTables();
+                alert("تم تحديث البيانات من السيرفر بنجاح.");
+            } catch (e) {
+                alert("خطأ في جلب البيانات.");
+            }
+        }
+
+        // 4. رسم الجداول بالبيانات
+        function renderAllTables() {
+            // المستخدمين
+            const tUsers = document.getElementById('tbody-users'); tUsers.innerHTML = '';
+            db.users.forEach((r, i) => { if (i > 0 && r[0]) tUsers.innerHTML += `<tr><td>${r[2]}</td><td>${r[0]}</td><td>${r[4]}</td><td><span class="badge bg-primary">${r[3]}</span></td><td><span class="badge bg-${r[5]}">${r[5]}</span></td><td><button class="action-btn btn-del" onclick="deleteRecord('Users', '${r[0]}')">حذف</button></td></tr>`; });
+
+            // النقابات
+            const tGuilds = document.getElementById('tbody-guilds'); tGuilds.innerHTML = '';
+            db.guilds.forEach((r, i) => { if (i > 0 && r[0]) tGuilds.innerHTML += `<tr><td><img src="${r[1]}" class="img-preview" alt="logo"></td><td>${r[0]}</td><td><button class="action-btn btn-del" onclick="deleteRecord('Guilds', '${r[0]}')">حذف</button></td></tr>`; });
+
+            // البكجات
+            const tPackages = document.getElementById('tbody-packages'); tPackages.innerHTML = '';
+            db.packages.forEach((r, i) => { if (i > 0 && r[0]) tPackages.innerHTML += `<tr><td><img src="${r[1]}" class="img-preview" alt="pkg"></td><td>${r[0]}</td><td>${r[2]}</td><td><button class="action-btn btn-del" onclick="deleteRecord('Packages', '${r[0]}')">حذف</button></td></tr>`; });
+
+            // المشرفين
+            const tSup = document.getElementById('tbody-supervisors'); tSup.innerHTML = '';
+            db.supervisors.forEach((r, i) => { if (i > 0 && r[0]) tSup.innerHTML += `<tr><td><img src="${r[2]}" class="img-preview" alt="sup"></td><td>${r[1]}</td><td>${r[0]}</td><td>${r[3]}</td><td><button class="action-btn btn-del" onclick="deleteRecord('Supervisors', '${r[0]}')">حذف</button></td></tr>`; });
+
+            // الطلبات
+            const tReq = document.getElementById('tbody-requests'); tReq.innerHTML = '';
+            db.requests.forEach((r, i) => { 
+                if (i > 0 && r[0]) {
+                    tReq.innerHTML += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="badge bg-${r[4]}">${r[4]}</span></td>
+                    <td>
+                        ${r[4] === 'pending' ? `<button class="action-btn btn-acc" onclick="approveRequest('${r[0]}')">موافقة</button>` : ''}
+                        <button class="action-btn btn-del" onclick="deleteRecord('Requests', '${r[0]}')">حذف</button>
+                    </td></tr>`; 
+                }
+            });
+        }
+
+        // 5. إضافة عنصر جديد لأي جدول
+        async function addRecord(e, tableName, inputIds) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerText = "جاري الحفظ..."; btn.disabled = true;
+
+            const dataArray = inputIds.map(id => document.getElementById(id).value);
 
             try {
-                const requestBody = {
-                    action: "delete",
-                    phone: phone
-                };
-
-                const response = await fetch(SCRIPT_URL, {
+                const res = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(requestBody),
+                    body: JSON.stringify({ action: "add", table: tableName, data: dataArray }),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
-
-                const result = await response.json();
+                const result = await res.json();
                 if(result.status === "success") {
-                    alert("تم حذف المستخدم بنجاح.");
-                    // تحديث المصفوفة المحلية وإعادة رسم الجدول
-                    allUsersData = allUsersData.filter(u => u[0] != phone);
-                    renderUsersTable();
+                    e.target.reset(); // مسح الحقول
+                    fetchData(); // جلب البيانات الجديدة
                 }
-            } catch (error) {
-                alert("حدث خطأ أثناء الحذف.");
-            }
+            } catch (err) { alert("خطأ في الاتصال"); }
+            btn.innerText = "تم الحفظ"; btn.disabled = false; setTimeout(() => btn.innerText = "إضافة", 2000);
+        }
+
+        // 6. حذف عنصر من أي جدول
+        async function deleteRecord(tableName, recordId) {
+            if(!confirm(`هل أنت متأكد من الحذف من جدول ${tableName}؟`)) return;
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "delete", table: tableName, id: recordId }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                await res.json();
+                fetchData(); // تحديث الجدول
+            } catch (err) { alert("فشل الحذف"); }
+        }
+
+        // 7. الموافقة على طلب سفر/تذكرة
+        async function approveRequest(reqId) {
+            let reqRow = db.requests.find(r => r[0] == reqId);
+            if(!reqRow) return;
+            
+            reqRow[4] = "active"; // تحويل الحالة لمقبول
+
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "update", table: "Requests", id: reqId, data: reqRow }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                await res.json();
+                fetchData();
+            } catch (err) { alert("فشل التحديث"); }
         }
     </script>
 </body>
