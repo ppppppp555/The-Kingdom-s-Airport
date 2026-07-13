@@ -3,178 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام حجز الرحلات</title>
+    <title>نظام حجز الرحلات وإدارة السفارة</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 
     <style>
         :root {
             --font-en: 'Cairo', sans-serif;
-            --font-ar: 'Beirut', sans-serif; 
+            --font-ar: 'Beirut', 'Cairo', sans-serif; 
             --deep-blue: #005A9C;
             --cloud-white: rgba(255, 255, 255, 0.95);
             --text-dark: #333333;
+            --bg-gradient: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: var(--font-ar), var(--font-en);
-            /* التدرج اللوني للسماء */
-            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            background: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text-dark);
             overflow-x: hidden;
             min-height: 100vh;
         }
 
-        /* ☁️ تأثير الغيوم المتحركة بالـ CSS النقي ☁️ */
-        .clouds-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0; /* في الخلفية دائماً */
-            pointer-events: none; /* حتى لا تمنع النقرات */
-            overflow: hidden;
-        }
-
-        .cloud {
-            position: absolute;
-            background: #fff;
-            border-radius: 50px;
-            opacity: 0.6;
-            animation: drift linear infinite;
-        }
-
-        /* رسم أجزاء الغيمة */
-        .cloud::before, .cloud::after {
-            content: '';
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-        }
-
+        /* الغيوم الخلفية */
+        .clouds-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .cloud { position: absolute; background: #fff; border-radius: 50px; opacity: 0.6; animation: drift linear infinite; }
+        .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
         .cloud::before { width: 50px; height: 50px; top: -20px; left: 10px; }
         .cloud::after { width: 70px; height: 70px; top: -30px; right: 15px; }
-
-        /* أحجام وأماكن الغيوم */
         .c1 { width: 120px; height: 40px; top: 10%; animation-duration: 35s; }
         .c2 { width: 160px; height: 50px; top: 30%; animation-duration: 45s; transform: scale(1.2); opacity: 0.4; }
         .c3 { width: 100px; height: 35px; top: 70%; animation-duration: 25s; }
-        .c4 { width: 140px; height: 45px; top: 50%; animation-duration: 50s; opacity: 0.5; transform: scale(1.5); }
+        @keyframes drift { from { right: -200px; } to { right: 110vw; } }
 
-        @keyframes drift {
-            from { right: -200px; }
-            to { right: 110vw; }
-        }
-
-        /* التحكم بالشاشات (الغيوم ستكون خلفها) */
+        /* التحكم بالشاشات الأساسية */
         .screen { display: none; height: 100vh; width: 100vw; position: relative; z-index: 1; }
         .screen.active { display: flex; }
 
-        /* 1. شاشة التحميل */
+        /* شاشة التحميل والدخول */
         #loading-screen { flex-direction: column; justify-content: center; align-items: center; color: white; }
         .car-animation { width: 140px; animation: drive 0.5s infinite alternate; z-index: 2; }
         @keyframes drive { 0% { transform: translateY(0px); } 100% { transform: translateY(-4px); } }
-
-        .loading-bar { width: 250px; height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 10px; margin-top: 20px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .loading-bar { width: 250px; height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 10px; margin-top: 20px; overflow: hidden; }
         .progress { width: 0%; height: 100%; background: #ffffff; border-radius: 10px; animation: loadProgress 3s ease-in-out forwards; }
         @keyframes loadProgress { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
 
-        /* 2. شاشة الدخول */
         .auth-container { margin: auto; background: var(--cloud-white); padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; backdrop-filter: blur(10px); }
         .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; background: rgba(0,0,0,0.05); color: #555; transition: 0.3s; }
-        .auth-tabs button.active { background: var(--deep-blue); color: white; box-shadow: 0 4px 10px rgba(0, 90, 156, 0.3); }
+        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; background: rgba(0,0,0,0.05); transition: 0.3s; }
+        .auth-tabs button.active { background: var(--deep-blue); color: white; }
         .auth-form { display: none; flex-direction: column; gap: 15px; }
         .auth-form.active { display: flex; }
-        input { padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; outline: none; transition: 0.3s; background: rgba(255,255,255,0.8); }
-        input:focus { border-color: var(--deep-blue); box-shadow: 0 0 5px rgba(0, 90, 156, 0.2); }
+        input { padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; outline: none; background: rgba(255,255,255,0.8); }
+        input:focus { border-color: var(--deep-blue); }
         .btn-primary { background: var(--deep-blue); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn-primary:hover { background: #004275; transform: translateY(-2px); }
 
-        /* 3. لوحة التحكم */
-        #dashboard-screen { flex-direction: column; position: relative; }
-        
-        /* 🍔 زر القائمة المنسدلة */
-        .menu-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border: none;
-            font-size: 24px;
-            color: var(--deep-blue);
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 100;
-            transition: 0.3s;
-        }
-        .menu-btn:hover { background: #f0f8ff; }
-
-        /* القائمة الجانبية (Sliding Menu) */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -300px; /* مخفية خارج الشاشة */
-            width: 260px;
-            background: var(--cloud-white);
-            height: 100vh;
-            padding: 20px;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 101;
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(15px);
-        }
-        .sidebar.open { right: 0; } /* تظهر عند إضافة كلاس open */
-        
-        .close-btn { align-self: flex-end; background: none; border: none; font-size: 24px; color: #ff4757; cursor: pointer; margin-bottom: 20px; }
-        
-        .nav-section { margin-bottom: 25px; }
+        /* القائمة الجانبية */
+        .menu-btn { position: absolute; top: 20px; right: 20px; background: white; border: none; font-size: 24px; color: var(--deep-blue); padding: 10px 15px; border-radius: 10px; cursor: pointer; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .sidebar { position: fixed; top: 0; right: -300px; width: 260px; background: var(--cloud-white); height: 100vh; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); transition: 0.4s; z-index: 101; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar.open { right: 0; }
+        .close-btn { align-self: flex-end; background: none; border: none; font-size: 24px; color: #ff4757; cursor: pointer; margin-bottom: 10px; }
         .nav-section h4 { color: #888; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
-        .nav-links { list-style: none; padding: 0; margin: 0; }
-        .nav-links li { margin-bottom: 10px; }
-        .nav-links a { text-decoration: none; color: var(--deep-blue); font-weight: bold; font-size: 16px; display: block; padding: 12px; border-radius: 10px; transition: 0.3s; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .nav-links a:hover { background: var(--deep-blue); color: white; transform: translateX(-5px); }
-
-        /* منطقة المحتوى */
-        .content { flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 60px; }
-        
-        .model-container { width: 100%; height: 450px; display: flex; justify-content: center; }
-        model-viewer { width: 100%; height: 100%; }
-
-        .user-profile-card { background: var(--cloud-white); padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; margin-top: -40px; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); }
-        .user-profile-card h3 { margin-top: 0; color: var(--deep-blue); font-size: 22px; }
-        .stats { display: flex; justify-content: space-between; margin-top: 15px; flex-wrap: wrap; gap: 15px; }
-        .stat-box { background: white; padding: 15px; border-radius: 12px; font-weight: bold; flex: 1; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-bottom: 3px solid #66a6ff; }
-        .warning { border-bottom-color: #ff7675; }
-        
-        /* تغطية الشاشة عند فتح القائمة */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99; backdrop-filter: blur(2px); }
+        .nav-links { list-style: none; padding: 0; margin: 0; margin-bottom: 20px; }
+        .nav-links a { text-decoration: none; color: var(--deep-blue); font-weight: bold; font-size: 15px; display: block; padding: 10px; border-radius: 10px; transition: 0.3s; cursor: pointer; margin-bottom: 8px; }
+        .nav-links a:hover, .nav-links a.active { background: var(--deep-blue); color: white; transform: translateX(-5px); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99; }
         .overlay.active { display: block; }
+
+        /* منطقة المحتوى الديناميكي للأقسام */
+        .content { flex: 1; padding: 80px 20px 20px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
+        .view-section { display: none; width: 100%; max-width: 800px; animation: fadeIn 0.4s ease; flex-direction: column; align-items: center; }
+        .view-section.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* تنسيقات الرئيسية */
+        .model-container { width: 100%; height: 400px; display: flex; justify-content: center; }
+        model-viewer { width: 100%; height: 100%; }
+        .user-profile-card { background: var(--cloud-white); padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; margin-top: -20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .stats { display: flex; justify-content: space-between; margin-top: 15px; gap: 10px; text-align: center; }
+        .stat-box { background: white; padding: 15px; border-radius: 12px; font-weight: bold; flex: 1; border-bottom: 3px solid #66a6ff; }
+        
+        /* تنسيقات أقسام المشرفين والإدارة */
+        .page-title { color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.3); margin-bottom: 20px; text-align: center; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; }
+        .profile-card { background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* مكان الصورة الشخصية */
+        .avatar-placeholder { width: 100px; height: 100px; background: #e0e0e0; border-radius: 50%; margin: 0 auto 15px; border: 3px solid var(--deep-blue); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .profile-card h3 { margin: 0 0 5px; color: var(--deep-blue); }
+        .profile-card p { margin: 0; color: #666; font-size: 14px; }
+        .role-badge { display: inline-block; background: var(--deep-blue); color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+        .btn-action { margin-top: 15px; background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; width: 100%; font-family: inherit; }
+
     </style>
 </head>
 <body>
 
     <div class="clouds-container">
-        <div class="cloud c1"></div>
-        <div class="cloud c2"></div>
-        <div class="cloud c3"></div>
-        <div class="cloud c4"></div>
+        <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
     </div>
 
     <div id="loading-screen" class="screen active">
         <img src="https://cdn-icons-png.flaticon.com/512/2951/2951111.png" alt="السيارة" class="car-animation">
         <div class="loading-bar"><div class="progress"></div></div>
-        <h2>جاري تشغيل المحرك...</h2>
+        <h2>جاري تشغيل النظام...</h2>
     </div>
 
     <div id="auth-screen" class="screen">
@@ -192,7 +129,7 @@
                 <input type="text" placeholder="اللقب" required>
                 <input type="tel" placeholder="رقم الجوال" required>
                 <input type="password" placeholder="كلمة السر" required>
-                <button type="submit" class="btn-primary">طلب إنشاء حساب</button>
+                <button type="submit" class="btn-primary">طلب الانضمام للنقابة</button>
             </form>
         </div>
     </div>
@@ -200,45 +137,123 @@
     <div id="dashboard-screen" class="screen">
         
         <button class="menu-btn" onclick="toggleMenu()">☰ القائمة</button>
-        
         <div class="overlay" id="menu-overlay" onclick="toggleMenu()"></div>
 
         <aside class="sidebar" id="sidebar">
             <button class="close-btn" onclick="toggleMenu()">✖</button>
             
             <div class="nav-section">
+                <h4>الرئيسية</h4>
+                <ul class="nav-links">
+                    <li><a onclick="switchView('view-home')" class="active">🏠 الملف الشخصي</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
                 <h4>خدمات الحجز</h4>
                 <ul class="nav-links">
-                    <li><a href="#booking">🚗 حجز رحلة جديدة</a></li>
-                    <li><a href="#packages">🧳 بكجات السفر</a></li>
+                    <li><a onclick="switchView('view-booking')">🚗 حجز رحلة جديدة</a></li>
+                    <li><a onclick="switchView('view-packages')">🧳 بكجات السفر</a></li>
+                    <li><a onclick="switchView('view-tickets')">🎫 تذاكري الحالية</a></li>
                 </ul>
             </div>
             
             <div class="nav-section">
-                <h4>سجلي الشخصي</h4>
+                <h4>الإدارة والتواصل</h4>
                 <ul class="nav-links">
-                    <li><a href="#tickets">🎫 تذاكري الحالية</a></li>
-                    <li><a href="#visited">📍 أماكن زرتها</a></li>
+                    <li><a onclick="switchView('view-supervisors')">📞 أرقام المشرفين</a></li>
+                    <li><a onclick="switchView('view-embassy')">🏛️ إدارة السفارة (للسفراء)</a></li>
                 </ul>
             </div>
         </aside>
 
         <main class="content">
-            <div class="model-container">
-                <model-viewer src="https://modelviewer.dev/shared-assets/models/Earth.glb" 
-                              auto-rotate camera-controls disable-zoom>
-                </model-viewer>
-            </div>
-
-            <div class="user-profile-card">
-                <h3>اللقب: <span id="user-nickname">محمد</span></h3>
-                <p>رقم الجوال: <span id="user-phone">0500000000</span></p>
-                <div class="stats">
-                    <div class="stat-box">السفرات<br><span>12</span></div>
-                    <div class="stat-box">التذاكر<br><span>3</span></div>
-                    <div class="stat-box warning">الإنذارات<br><span>0</span></div>
+            
+            <div id="view-home" class="view-section active">
+                <div class="model-container">
+                    <model-viewer src="https://modelviewer.dev/shared-assets/models/Earth.glb" auto-rotate camera-controls disable-zoom></model-viewer>
+                </div>
+                <div class="user-profile-card">
+                    <h3>اللقب: <span>محمد</span></h3>
+                    <p>رقم الجوال: <span>0500000000</span></p>
+                    <p style="color:var(--deep-blue); font-weight:bold;">النقابة التابع لها: <span style="color:#e67e22;">قيد الانتظار</span></p>
+                    <div class="stats">
+                        <div class="stat-box">السفرات<br><span>12</span></div>
+                        <div class="stat-box">التذاكر<br><span>3</span></div>
+                        <div class="stat-box" style="border-bottom-color:#ff7675;">الإنذارات<br><span>0</span></div>
+                    </div>
                 </div>
             </div>
+
+            <div id="view-booking" class="view-section">
+                <h2 class="page-title">حجز رحلة جديدة</h2>
+                <div class="user-profile-card" style="margin-top:0;">
+                    <p>واجهة اختيار الوجهة وتاريخ الرحلة ستكون هنا...</p>
+                </div>
+            </div>
+
+            <div id="view-packages" class="view-section">
+                <h2 class="page-title">بكجات السفر المتاحة</h2>
+                <div class="user-profile-card" style="margin-top:0;">
+                    <p>قائمة البكجات السياحية ستعرض هنا...</p>
+                </div>
+            </div>
+
+            <div id="view-tickets" class="view-section">
+                <h2 class="page-title">تذاكري الحالية</h2>
+                <div class="user-profile-card" style="margin-top:0;">
+                    <p>لا توجد تذاكر فعالة حالياً.</p>
+                </div>
+            </div>
+
+            <div id="view-supervisors" class="view-section">
+                <h2 class="page-title">أرقام المشرفين للتواصل</h2>
+                <div class="cards-grid">
+                    <div class="profile-card">
+                        <div class="avatar-placeholder">
+                            <img src="https://ui-avatars.com/api/?name=مشرف+1&background=005A9C&color=fff" alt="صورة المشرف">
+                        </div>
+                        <h3>أحمد</h3>
+                        <p>مشرف الدعم الفني</p>
+                        <button class="btn-action">تواصل واتساب</button>
+                    </div>
+                    <div class="profile-card">
+                        <div class="avatar-placeholder">
+                            <img src="https://ui-avatars.com/api/?name=مشرف+2&background=87CEEB&color=fff" alt="صورة المشرف">
+                        </div>
+                        <h3>خالد</h3>
+                        <p>مشرف الحجوزات</p>
+                        <button class="btn-action">تواصل واتساب</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-embassy" class="view-section">
+                <h2 class="page-title">إدارة السفارة (صلاحيات مخصصة)</h2>
+                
+                <div class="cards-grid">
+                    <div class="profile-card" style="border: 2px solid #f1c40f;">
+                        <div class="avatar-placeholder">
+                            <img src="https://ui-avatars.com/api/?name=قائد+السفارة&background=f1c40f&color=fff" alt="القائد">
+                        </div>
+                        <h3>قائد السفارة</h3>
+                        <span class="role-badge" style="background:#f1c40f; color:#333;">الرتبة الأعلى</span>
+                        <p style="margin-top:10px;">صلاحيات إدارة السفراء وإنشاء حساباتهم.</p>
+                        <button class="btn-action" style="background:#005A9C;">دخول لوحة القائد</button>
+                    </div>
+
+                    <div class="profile-card" style="border: 2px solid #e67e22;">
+                        <div class="avatar-placeholder">
+                            <img src="https://ui-avatars.com/api/?name=سفير+النقابة&background=e67e22&color=fff" alt="السفير">
+                        </div>
+                        <h3>سفير النقابة</h3>
+                        <span class="role-badge" style="background:#e67e22;">رتبة إدارية</span>
+                        <p style="margin-top:10px;">صلاحيات قبول المسافرين لنقابته وتفقد السجلات.</p>
+                        <button class="btn-action" style="background:#005A9C;">دخول لوحة السفير</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -276,16 +291,32 @@
 
         function handleSignup(e) {
             e.preventDefault();
-            alert("تم إرسال طلبك بنجاح.");
+            alert("تم إرسال طلب الانضمام. يرجى الانتظار حتى يوافق عليه سفير النقابة.");
             toggleAuth('login');
         }
 
-        // دالة فتح وإغلاق القائمة الجانبية (Hamburger Menu)
+        // دالة فتح وإغلاق القائمة
         function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('menu-overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('menu-overlay').classList.toggle('active');
+        }
+
+        // 🌟 الدالة الجديدة: التنقل بين الأقسام 🌟
+        function switchView(viewId) {
+            // 1. إخفاء كل الأقسام
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => view.classList.remove('active'));
+            
+            // 2. إظهار القسم المطلوب
+            document.getElementById(viewId).classList.add('active');
+
+            // 3. تغيير لون الرابط النشط في القائمة الجانبية
+            const links = document.querySelectorAll('.nav-links a');
+            links.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 4. إغلاق القائمة الجانبية تلقائياً في الجوال
+            toggleMenu();
         }
     </script>
 </body>
