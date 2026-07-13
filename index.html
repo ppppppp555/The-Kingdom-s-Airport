@@ -35,10 +35,10 @@
         .screen { display: none; height: 100vh; width: 100vw; position: relative; z-index: 1; }
         .screen.active { display: flex; }
 
-        /* شاشة التحميل */
+        /* شاشة التحميل (تم إعادتها للطائرة) */
         #loading-screen { flex-direction: column; justify-content: center; align-items: center; color: white; }
-        .car-animation { width: 140px; animation: drive 0.5s infinite alternate; z-index: 2; }
-        @keyframes drive { 0% { transform: translateY(0px); } 100% { transform: translateY(-4px); } }
+        .plane-animation { width: 150px; animation: fly 2s infinite alternate; z-index: 2; }
+        @keyframes fly { 0% { transform: translateY(0px); } 100% { transform: translateY(-20px); } }
         .loading-bar { width: 250px; height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 10px; margin-top: 20px; overflow: hidden; }
         .progress { width: 0%; height: 100%; background: #ffffff; border-radius: 10px; animation: loadProgress 3s ease-in-out forwards; }
         @keyframes loadProgress { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
@@ -110,9 +110,9 @@
     </div>
 
     <div id="loading-screen" class="screen active">
-        <img src="https://cdn-icons-png.flaticon.com/512/2951/2951111.png" alt="السيارة" class="car-animation">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="الطائرة" class="plane-animation">
         <div class="loading-bar"><div class="progress"></div></div>
-        <h2>جاري تشغيل النظام...</h2>
+        <h2>جاري التجهيز للتحليق...</h2>
     </div>
 
     <div id="auth-screen" class="screen">
@@ -199,14 +199,14 @@
                 <h2 class="page-title">حجز رحلة جديدة</h2>
                 <div class="user-profile-card" style="margin-top:0;">
                     <form onsubmit="handleBooking(event)">
-                        <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">نوع الحجز:</label>
-                        <select id="book-type" required style="margin-bottom:15px;">
-                            <option value="تذكرة سفر">تذكرة سفر فردية</option>
-                            <option value="بكج سياحي">بكج سياحي متكامل</option>
-                        </select>
                         
-                        <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">الوجهة والتفاصيل:</label>
-                        <textarea id="book-details" rows="4" placeholder="اكتب وجهتك أو اسم البكج الذي ترغب به هنا..." required style="margin-bottom:20px;"></textarea>
+                        <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">وجهة الحجز (النقابة):</label>
+                        <select id="book-destination" required style="margin-bottom:15px;">
+                            <option value="" disabled selected>جاري تحميل الوجهات...</option>
+                            </select>
+                        
+                        <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">تفاصيل إضافية (اختياري):</label>
+                        <textarea id="book-details" rows="4" placeholder="اكتب أي ملاحظات إضافية حول رحلتك أو اسم البكج هنا..." style="margin-bottom:20px;"></textarea>
                         
                         <button type="submit" class="btn-primary" id="btn-book">إرسال طلب الحجز</button>
                     </form>
@@ -227,13 +227,13 @@
                         <thead>
                             <tr>
                                 <th>رقم الطلب</th>
-                                <th>النوع</th>
+                                <th>الوجهة</th>
                                 <th>التفاصيل</th>
                                 <th>الحالة</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-my-tickets">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -241,7 +241,7 @@
             <div id="view-supervisors" class="view-section">
                 <h2 class="page-title">تواصل مع المشرفين</h2>
                 <div class="cards-grid" id="supervisors-container">
-                    </div>
+                </div>
             </div>
 
         </main>
@@ -253,7 +253,7 @@
         // ==========================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO9UjqMfIQxbpFhPTSf4vwm6rbm6Rqryg7eoIPqIG4nHHQWC582BMOqe2Zly-zDiAgOA/exec";
         
-        let loggedInUserPhone = ""; // لحفظ رقم جوال المستخدم الحالي لاستخدامه في الطلبات
+        let loggedInUserPhone = "";
 
         // التحميل المبدئي
         window.addEventListener('load', () => {
@@ -263,7 +263,6 @@
             }, 3000); 
         });
 
-        // تبديل النوافذ
         function toggleAuth(type) {
             if(type === 'login') {
                 document.getElementById('form-login').classList.add('active'); document.getElementById('form-signup').classList.remove('active');
@@ -274,7 +273,6 @@
             }
         }
 
-        // القائمة الجانبية والتنقل
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('menu-overlay').classList.toggle('active');
@@ -301,11 +299,9 @@
             const pass = document.getElementById('signup-pass').value;
             const guild = document.getElementById('signup-guild').value;
 
-            // الترتيب: جوال, سر, لقب, رتبة, نقابة, حالة, سفرات, تذاكر, إنذارات
             const newUserData = [phone, pass, name, "user", guild, "pending", 0, 0, 0];
 
             try {
-                // نرسل الـ action كـ add والـ table كـ Users ليتوافق مع الـ API الجديد
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify({ action: "add", table: "Users", data: newUserData }),
@@ -325,7 +321,7 @@
         }
 
         // ==========================================
-        // 2. تسجيل الدخول وجلب البيانات الحية (Super API)
+        // 2. تسجيل الدخول وجلب البيانات الحية
         // ==========================================
         async function handleLogin(e) {
             e.preventDefault();
@@ -336,7 +332,6 @@
             btn.innerText = "جاري مصادقة البيانات..."; btn.disabled = true;
 
             try {
-                // جلب كل قواعد البيانات (مستخدمين، مشرفين، بكجات، طلبات) دفعة واحدة
                 const response = await fetch(SCRIPT_URL + "?admin=true");
                 const db = await response.json();
                 
@@ -357,7 +352,6 @@
                     } else if (userData[5] === "rejected") {
                         alert("عذراً، تم رفض طلب انضمامك.");
                     } else {
-                        // حفظ جوال المستخدم للجلسة الحالية
                         loggedInUserPhone = userData[0];
 
                         // 1. تحديث الملف الشخصي
@@ -369,12 +363,20 @@
                         document.getElementById('profile-tickets').innerText = userData[7] || 0;
                         document.getElementById('profile-warnings').innerText = userData[8] || 0;
 
-                        // إظهار رابط الإدارة للسفراء والقادة
                         if (userData[3] === "ambassador" || userData[3] === "leader") {
                             document.getElementById('nav-embassy').style.display = "block";
                         }
 
-                        // 2. رسم البكجات المتاحة من قاعدة البيانات
+                        // 2. تعبئة قائمة النقابات المتاحة للسفر في نموذج الحجز
+                        const destSelect = document.getElementById('book-destination');
+                        destSelect.innerHTML = '<option value="" disabled selected>اختر وجهة السفر (النقابة)</option>';
+                        db.guilds.forEach((guild, i) => {
+                            if(i > 0 && guild[0]) {
+                                destSelect.innerHTML += `<option value="${guild[0]}">نقابة ${guild[0]}</option>`;
+                            }
+                        });
+
+                        // 3. رسم البكجات المتاحة
                         const pkgContainer = document.getElementById('packages-container');
                         pkgContainer.innerHTML = '';
                         let hasPackages = false;
@@ -388,13 +390,13 @@
                                     </div>
                                     <h3>${pkg[0]}</h3>
                                     <p style="color:var(--deep-blue); font-weight:bold;">${pkg[2]}</p>
-                                    <button class="btn-action" onclick="switchView('view-booking')">احجز الآن</button>
+                                    <button class="btn-action" onclick="switchView('view-booking'); document.getElementById('book-details').value='طلب حجز: ${pkg[0]}';">احجز الآن</button>
                                 </div>`;
                             }
                         });
                         if(!hasPackages) pkgContainer.innerHTML = '<p style="text-align:center; width:100%;">لا توجد بكجات متاحة حالياً.</p>';
 
-                        // 3. رسم المشرفين للتواصل
+                        // 4. رسم المشرفين للتواصل
                         const supContainer = document.getElementById('supervisors-container');
                         supContainer.innerHTML = '';
                         db.supervisors.forEach((sup, i) => {
@@ -409,12 +411,11 @@
                             }
                         });
 
-                        // 4. رسم طلبات المستخدم الحالية في جدول التذاكر
+                        // 5. رسم طلبات المستخدم
                         const tixContainer = document.getElementById('tbody-my-tickets');
                         tixContainer.innerHTML = '';
                         let hasTickets = false;
                         db.requests.forEach((req, i) => {
-                            // التحقق أن الطلب يخص رقم جوال المسافر الحالي
                             if (i > 0 && req[1] == loggedInUserPhone) {
                                 hasTickets = true;
                                 let statusClass = req[4] === 'pending' ? 'pending' : (req[4] === 'active' ? 'active' : 'rejected');
@@ -424,14 +425,13 @@
                                 <tr>
                                     <td><strong>${req[0]}</strong></td>
                                     <td>${req[2]}</td>
-                                    <td>${req[3]}</td>
+                                    <td>${req[3] || '-'}</td>
                                     <td><span class="badge bg-${statusClass}">${statusText}</span></td>
                                 </tr>`;
                             }
                         });
                         if(!hasTickets) tixContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد طلبات أو تذاكر حالية.</td></tr>';
 
-                        // 5. إخفاء الدخول وعرض لوحة التحكم
                         document.getElementById('auth-screen').classList.remove('active');
                         document.getElementById('dashboard-screen').classList.add('active');
                     }
@@ -446,21 +446,20 @@
         }
 
         // ==========================================
-        // 3. إرسال طلب حجز تذكرة / بكج
+        // 3. إرسال طلب السفر
         // ==========================================
         async function handleBooking(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-book');
             btn.innerText = "جاري إرسال الطلب..."; btn.disabled = true;
 
-            const reqType = document.getElementById('book-type').value;
+            const reqDest = document.getElementById('book-destination').value;
             const reqDetails = document.getElementById('book-details').value;
             
-            // توليد رقم طلب عشوائي لتمييزه
             const randomId = "REQ-" + Math.floor(Math.random() * 90000 + 10000); 
 
-            // بنية الطلب لجدول Requests: رقم الطلب، الجوال، النوع، التفاصيل، الحالة
-            const newRequestData = [randomId, loggedInUserPhone, reqType, reqDetails, "pending"];
+            // الترتيب: رقم الطلب، الجوال، الوجهة (النقابة)، التفاصيل، الحالة
+            const newRequestData = [randomId, loggedInUserPhone, reqDest, reqDetails, "pending"];
 
             try {
                 const response = await fetch(SCRIPT_URL, {
@@ -472,9 +471,6 @@
                 if(result.status === "success") {
                     alert("تم إرسال طلبك بنجاح! رقم الطلب: " + randomId + "\nسيتم مراجعته من قبل الإدارة قريباً.");
                     document.getElementById('book-details').value = '';
-                    
-                    // تحويل المستخدم لرؤية طلباته
-                    // ملاحظة: لن يظهر الطلب في الجدول إلا بعد تحديث الصفحة (تسجيل الدخول مجدداً) لضمان القراءة من السيرفر.
                     switchView('view-tickets'); 
                 }
             } catch (error) {
