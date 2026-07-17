@@ -163,12 +163,8 @@
 
     <!-- 1. شاشة التحميل -->
     <div id="loading-screen" class="screen active">
-        <!-- 
-        ==================================================
-        👇 ضع رابط صورة التحميل (الطائرة) بين علامتي التنصيص 👇
-        ==================================================
-        -->
-        <img src="" alt="شعار التحميل" class="plane-animation" id="loading-logo">
+        <!-- الصورة المخصصة -->
+        <img src="https://i.ibb.co/HLsjN3jq/61-20260717204755.png" alt="شعار التحميل" class="plane-animation" id="loading-logo">
         
         <div class="loading-bar"><div class="progress"></div></div>
         <h2>جاري تحضير مقصورة القيادة...</h2>
@@ -237,7 +233,6 @@
                 <h4>خدمات كبار الشخصيات</h4>
                 <ul class="nav-links">
                     <li><a onclick="switchView('view-supervisors')">📞 طاقم الإشراف</a></li>
-                    <li id="nav-embassy" style="display: none;"><a href="admin.html" target="_blank" style="color:var(--gold-premium);">🏛️ الدخول للإدارة العليا</a></li>
                 </ul>
             </div>
             
@@ -250,11 +245,7 @@
             <!-- قسم 1: الرئيسية -->
             <div id="view-home" class="view-section active">
                 <div class="model-container">
-                    <!-- 
-                    ==================================================
-                    👇 ضع اسم ملف الـ 3D الخاص بك هنا 👇
-                    ==================================================
-                    -->
+                    <!-- اسم ملف الـ 3D الخاص بك -->
                     <model-viewer src="earth.glb" auto-rotate camera-controls disable-zoom></model-viewer>
                 </div>
                 
@@ -270,7 +261,6 @@
                     <div class="stats">
                         <div class="stat-box">إجمالي الرحلات<br><span id="profile-flights">0</span></div>
                         <div class="stat-box">التذاكر المصدرة<br><span id="profile-tickets">0</span></div>
-                        <!-- صندوق الإنذارات البارز -->
                         <div class="stat-box warning">سجل الإنذارات<br><span id="profile-warnings">0</span></div>
                     </div>
                 </div>
@@ -282,12 +272,10 @@
                 
                 <div class="user-profile-card" style="margin-top:0; background: transparent; box-shadow: none; padding: 0; border: none;">
                     
-                    <!-- شبكة النقابات التفاعلية -->
                     <div class="cards-grid" id="booking-guilds-grid">
                         <p style="color:var(--text-muted); text-align:center; width:100%;">جاري إعداد مدرج الهبوط...</p>
                     </div>
 
-                    <!-- نموذج اختيار المدة (يظهر بعد اختيار النقابة) -->
                     <div id="booking-details-form" style="display:none; background:white; padding:30px; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;">
                         <h3 id="selected-guild-title" style="color:var(--navy-dark); text-align:center; border-bottom:2px dashed #E2E8F0; padding-bottom:20px; margin-top:0; font-weight:900;"></h3>
                         
@@ -350,7 +338,7 @@
 
     <script>
         // ==========================================
-        // 🔴 الرابط الجديد والمحدث لقاعدة البيانات 🔴
+        // 🔴 الرابط لقاعدة البيانات 🔴
         // ==========================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO9UjqMfIQxbpFhPTSf4vwm6rbm6Rqryg7eoIPqIG4nHHQWC582BMOqe2Zly-zDiAgOA/exec";
         
@@ -457,10 +445,6 @@
                         document.getElementById('profile-flights').innerText = userData[6] || 0;
                         document.getElementById('profile-tickets').innerText = userData[7] || 0;
                         document.getElementById('profile-warnings').innerText = userData[8] || 0;
-
-                        if (userData[3] === "ambassador" || userData[3] === "leader") {
-                            document.getElementById('nav-embassy').style.display = "block";
-                        }
 
                         // رسم الوجهات (النقابات)
                         const bookGuildsGrid = document.getElementById('booking-guilds-grid');
