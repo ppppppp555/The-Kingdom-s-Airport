@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>نظام حجز الرحلات - الخطوط الملكية</title>
     
     <!-- استدعاء أوزان متعددة لخط كايرو لمظهر أكثر فخامة -->
@@ -12,12 +12,12 @@
     <style>
         /* 🎨 الثيم الجديد: First Class Luxury */
         :root {
-            --navy-dark: #0A1931;       /* كحلي ملكي عميق */
-            --navy-light: #150E56;      /* أزرق ليلي */
-            --gold-premium: #C5A059;    /* ذهبي شامبين */
-            --gold-light: #F3E5AB;      /* ذهبي فاتح */
-            --pearl-white: #F8F9FA;     /* أبيض لؤلؤي للخلفية */
-            --glass-bg: rgba(255, 255, 255, 0.75); /* زجاج مصنفر */
+            --navy-dark: #0A1931;
+            --navy-light: #150E56;
+            --gold-premium: #C5A059;
+            --gold-light: #F3E5AB;
+            --pearl-white: #F8F9FA;
+            --glass-bg: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.5);
             --text-dark: #1A1A1A;
             --text-muted: #6C757D;
@@ -31,86 +31,87 @@
             overflow-x: hidden; min-height: 100vh; 
         }
 
-        /* ✨ الإضاءة المحيطية المتحركة (بديل الغيوم للفخامة) ✨ */
+        /* ✨ الإضاءة المحيطية المتحركة ✨ */
         .ambient-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; background: #f0f2f5; }
         .glow-1 { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(197,160,89,0.15) 0%, rgba(255,255,255,0) 70%); top: -200px; right: -100px; filter: blur(60px); animation: float 20s infinite alternate ease-in-out; }
         .glow-2 { position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(10,25,49,0.1) 0%, rgba(255,255,255,0) 70%); bottom: -200px; left: -200px; filter: blur(60px); animation: float 25s infinite alternate-reverse ease-in-out; }
         @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-50px, 50px) scale(1.1); } }
 
         /* التحكم بالشاشات */
-        .screen { display: none; height: 100vh; width: 100vw; position: relative; z-index: 1; }
+        .screen { display: none; min-height: 100vh; width: 100vw; position: relative; z-index: 1; }
         .screen.active { display: flex; }
 
         /* 1. شاشة التحميل الملكية */
-        #loading-screen { flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle at center, var(--navy-light), var(--navy-dark)); color: var(--gold-premium); }
-        .plane-animation { width: 180px; animation: fly 2.5s infinite ease-in-out alternate; z-index: 2; object-fit: contain; min-height: 150px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
+        #loading-screen { flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle at center, var(--navy-light), var(--navy-dark)); color: var(--gold-premium); padding: 20px;}
+        .plane-animation { width: 150px; max-width: 80%; animation: fly 2.5s infinite ease-in-out alternate; z-index: 2; object-fit: contain; min-height: 120px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
         @keyframes fly { 0% { transform: translateY(10px) rotate(2deg); } 100% { transform: translateY(-15px) rotate(-2deg); } }
-        .loading-bar { width: 300px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 30px; overflow: hidden; }
+        .loading-bar { width: 80%; max-width: 300px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 30px; overflow: hidden; }
         .progress { width: 0%; height: 100%; background: var(--gold-premium); border-radius: 10px; animation: loadProgress 3s ease-in-out forwards; box-shadow: 0 0 10px var(--gold-premium); }
         @keyframes loadProgress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
-        #loading-screen h2 { font-weight: 300; letter-spacing: 2px; margin-top: 20px; font-size: 20px; }
+        #loading-screen h2 { font-weight: 300; letter-spacing: 1px; margin-top: 20px; font-size: 18px; text-align: center;}
 
         /* 2. شاشة الدخول (تصميم زجاجي فاخر) */
-        .auth-container { margin: auto; background: var(--glass-bg); padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px rgba(10, 25, 49, 0.1); width: 90%; max-width: 420px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); }
-        .auth-tabs { display: flex; gap: 15px; margin-bottom: 30px; }
-        .auth-tabs button { flex: 1; padding: 14px; border: none; cursor: pointer; border-radius: 12px; font-weight: 700; background: transparent; color: var(--text-muted); transition: 0.3s; font-family: inherit; font-size: 16px; border: 1px solid transparent; }
+        .auth-container { margin: auto; background: var(--glass-bg); padding: 30px; border-radius: 24px; box-shadow: 0 25px 50px rgba(10, 25, 49, 0.1); width: 90%; max-width: 420px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); box-sizing: border-box;}
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 12px; font-weight: 700; background: transparent; color: var(--text-muted); transition: 0.3s; font-family: inherit; font-size: 15px; border: 1px solid transparent; }
         .auth-tabs button.active { background: white; color: var(--navy-dark); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--glass-border); }
-        .auth-form { display: none; flex-direction: column; gap: 20px; }
+        .auth-form { display: none; flex-direction: column; gap: 15px; }
         .auth-form.active { display: flex; }
-        input, select, textarea { padding: 16px; border: 1px solid #E2E8F0; border-radius: 12px; font-family: inherit; outline: none; background: rgba(255,255,255,0.9); width: 100%; box-sizing: border-box; font-size: 15px; transition: 0.3s; }
+        input, select, textarea { padding: 14px; border: 1px solid #E2E8F0; border-radius: 12px; font-family: inherit; outline: none; background: rgba(255,255,255,0.9); width: 100%; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
         input:focus, select:focus, textarea:focus { border-color: var(--gold-premium); box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1); }
         
-        .btn-primary { background: var(--navy-dark); color: var(--gold-premium); border: 1px solid var(--navy-dark); padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 16px; transition: all 0.3s ease; font-family: inherit; width: 100%; letter-spacing: 1px; }
+        .btn-primary { background: var(--navy-dark); color: var(--gold-premium); border: 1px solid var(--navy-dark); padding: 14px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 15px; transition: all 0.3s ease; font-family: inherit; width: 100%; letter-spacing: 1px; }
         .btn-primary:hover { background: var(--gold-premium); color: var(--navy-dark); border-color: var(--gold-premium); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2); }
         .btn-primary:disabled { background: #CBD5E1; color: #64748B; border-color: #CBD5E1; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* 3. القائمة الجانبية (تصميم كحلي ملكي) */
-        .menu-btn { position: absolute; top: 20px; right: 20px; background: white; border: none; font-size: 24px; color: var(--navy-dark); padding: 10px 15px; border-radius: 12px; cursor: pointer; z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .sidebar { position: fixed; top: 0; right: -320px; width: 280px; background: var(--navy-dark); height: 100vh; padding: 30px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.2); transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 101; display: flex; flex-direction: column; overflow-y: auto; color: white; }
+        .menu-btn { position: absolute; top: 15px; right: 15px; background: white; border: none; font-size: 22px; color: var(--navy-dark); padding: 8px 12px; border-radius: 10px; cursor: pointer; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .sidebar { position: fixed; top: 0; right: -320px; width: 260px; background: var(--navy-dark); height: 100vh; padding: 25px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.2); transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 101; display: flex; flex-direction: column; overflow-y: auto; color: white; box-sizing: border-box; }
         .sidebar.open { right: 0; }
-        .close-btn { align-self: flex-end; background: rgba(255,255,255,0.1); border: none; font-size: 20px; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        .close-btn { align-self: flex-end; background: rgba(255,255,255,0.1); border: none; font-size: 18px; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
         .close-btn:hover { background: var(--gold-premium); color: var(--navy-dark); }
-        .nav-section h4 { color: var(--gold-premium); font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; }
-        .nav-links { list-style: none; padding: 0; margin: 0; margin-bottom: 30px; }
-        .nav-links a { text-decoration: none; color: #E2E8F0; font-weight: 400; font-size: 16px; display: block; padding: 12px 15px; border-radius: 10px; transition: all 0.3s; cursor: pointer; margin-bottom: 5px; border-right: 3px solid transparent; }
+        .nav-section h4 { color: var(--gold-premium); font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; margin-bottom: 20px; }
+        .nav-links a { text-decoration: none; color: #E2E8F0; font-weight: 400; font-size: 14px; display: block; padding: 10px 12px; border-radius: 8px; transition: all 0.3s; cursor: pointer; margin-bottom: 5px; border-right: 3px solid transparent; }
         .nav-links a:hover, .nav-links a.active { background: rgba(197, 160, 89, 0.1); color: var(--gold-premium); border-right: 3px solid var(--gold-premium); font-weight: 700; transform: translateX(-5px); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 49, 0.6); backdrop-filter: blur(4px); z-index: 99; }
         .overlay.active { display: block; }
 
         /* المحتوى والبطاقات الزجاجية */
-        .content { flex: 1; padding: 80px 20px 40px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
-        .view-section { display: none; width: 100%; max-width: 900px; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); flex-direction: column; align-items: center; }
+        .content { flex: 1; padding: 70px 15px 40px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
+        .view-section { display: none; width: 100%; max-width: 900px; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); flex-direction: column; align-items: center; }
         .view-section.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* مجسم 3D والملف الشخصي */
-        .model-container { width: 100%; height: 450px; display: flex; justify-content: center; margin-bottom: -40px; z-index: 1;}
+        .model-container { width: 100%; height: 350px; display: flex; justify-content: center; margin-bottom: -30px; z-index: 1;}
         model-viewer { width: 100%; height: 100%; }
         
-        .user-profile-card { background: var(--glass-bg); padding: 35px; border-radius: 24px; width: 100%; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.04); border: 1px solid white; backdrop-filter: blur(20px); z-index: 2; position: relative;}
-        .user-profile-card h3 { margin-top: 0; color: var(--navy-dark); font-size: 26px; font-weight: 900; }
-        .user-profile-card p { font-size: 16px; color: var(--text-muted); }
+        .user-profile-card { background: var(--glass-bg); padding: 25px; border-radius: 20px; width: 100%; box-sizing: border-box; box-shadow: 0 15px 30px rgba(0,0,0,0.04); border: 1px solid white; backdrop-filter: blur(20px); z-index: 2; position: relative;}
+        .user-profile-card h3 { margin-top: 0; color: var(--navy-dark); font-size: 22px; font-weight: 900; }
+        .user-profile-card p { font-size: 14px; color: var(--text-muted); }
         
-        /* 🔥 تصميم صناديق الإحصائيات الفخم (VIP Stats) 🔥 */
-        .stats { display: flex; justify-content: space-between; margin-top: 30px; gap: 20px; text-align: center; flex-wrap: wrap;}
+        /* 🔥 تصميم صناديق الإحصائيات الفخم المتجاوب 🔥 */
+        .stats { display: flex; justify-content: space-between; margin-top: 25px; gap: 15px; text-align: center; flex-wrap: wrap;}
         .stat-box { 
             background: white; 
-            padding: 20px; 
-            border-radius: 16px; 
+            padding: 15px; 
+            border-radius: 14px; 
             font-weight: 700; 
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             flex: 1; 
-            min-width: 120px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.03); 
+            min-width: 100px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.03); 
             border: 1px solid #F1F5F9;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
         .stat-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--navy-dark); }
-        .stat-box:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-        .stat-box span { display: block; font-size: 32px; font-weight: 900; color: var(--navy-dark); margin-top: 10px; }
+        .stat-box:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.06); }
+        .stat-box span { display: block; font-size: 28px; font-weight: 900; color: var(--navy-dark); margin-top: 8px; }
         
         /* صندوق الإنذارات */
         .stat-box.warning { background: #FFFBFB; border-color: #FEE2E2; }
@@ -118,39 +119,56 @@
         .stat-box.warning span { color: #EF4444; }
         
         /* العناوين والبطاقات الديناميكية */
-        .page-title { color: var(--navy-dark); margin-bottom: 30px; text-align: center; font-weight: 900; font-size: 28px; position: relative; padding-bottom: 15px;}
-        .page-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--gold-premium); border-radius: 2px;}
+        .page-title { color: var(--navy-dark); margin-bottom: 25px; text-align: center; font-weight: 900; font-size: 22px; position: relative; padding-bottom: 12px;}
+        .page-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: var(--gold-premium); border-radius: 2px;}
         
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; width: 100%; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; }
         
         /* تصميم البطاقات (وجهات، بكجات، مشرفين) */
-        .profile-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.04); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #F1F5F9; position: relative; overflow: hidden;}
-        .profile-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(10, 25, 49, 0.1); border-color: var(--gold-light); }
-        .guild-card.selected { border: 3px solid var(--gold-premium); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(197, 160, 89, 0.2); }
+        .profile-card { background: white; padding: 20px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.04); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #F1F5F9; position: relative; overflow: hidden; box-sizing: border-box;}
+        .profile-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(10, 25, 49, 0.08); border-color: var(--gold-light); }
+        .guild-card.selected { border: 3px solid var(--gold-premium); transform: translateY(-8px); box-shadow: 0 15px 30px rgba(197, 160, 89, 0.2); }
 
-        .avatar-placeholder { width: 110px; height: 110px; background: #F8F9FA; border-radius: 50%; margin: 0 auto 20px; border: 4px solid var(--pearl-white); box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .avatar-placeholder { width: 90px; height: 90px; background: #F8F9FA; border-radius: 50%; margin: 0 auto 15px; border: 3px solid var(--pearl-white); box-shadow: 0 8px 15px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-card h3 { margin: 0 0 8px; color: var(--navy-dark); font-weight: 900; font-size: 20px;}
+        .profile-card h3 { margin: 0 0 8px; color: var(--navy-dark); font-weight: 900; font-size: 18px;}
         
-        .btn-action { margin-top: 20px; background: var(--pearl-white); color: var(--navy-dark); border: 1px solid #E2E8F0; padding: 12px 20px; border-radius: 10px; cursor: pointer; width: 100%; font-family: inherit; font-weight: 700; text-decoration: none; display: block; box-sizing: border-box; transition: 0.3s;}
+        .btn-action { margin-top: 15px; background: var(--pearl-white); color: var(--navy-dark); border: 1px solid #E2E8F0; padding: 10px 15px; border-radius: 10px; cursor: pointer; width: 100%; font-family: inherit; font-weight: 700; text-decoration: none; display: block; box-sizing: border-box; transition: 0.3s;}
         .btn-action:hover { background: var(--navy-dark); color: var(--gold-premium); border-color: var(--navy-dark); }
         
-        /* الجداول الفخمة */
-        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;}
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 20px; text-align: right; border-bottom: 1px solid #F8F9FA; }
-        th { background: var(--navy-dark); color: var(--gold-premium); font-weight: 700; letter-spacing: 1px; font-size: 14px;}
+        /* الجداول الفخمة المتجاوبة للجوال */
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 16px; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border: 1px solid #F1F5F9; -webkit-overflow-scrolling: touch;}
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #F8F9FA; font-size: 13px;}
+        th { background: var(--navy-dark); color: var(--gold-premium); font-weight: 700; letter-spacing: 0.5px; white-space: nowrap;}
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #F8F9FA; }
         
-        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 900; color: white; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: 900; color: white; display: inline-block; box-shadow: 0 3px 5px rgba(0,0,0,0.1); white-space: nowrap;}
         .bg-pending { background: #F59E0B; }
         .bg-active { background: #10B981; }
         .bg-rejected { background: #EF4444; }
 
         /* العداد التنازلي */
-        .countdown-timer { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 900; color: var(--navy-dark); background: var(--gold-light); padding: 8px 15px; border-radius: 8px; text-align: center; border: 1px solid var(--gold-premium); box-shadow: 0 4px 10px rgba(197, 160, 89, 0.2);}
+        .countdown-timer { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 900; color: var(--navy-dark); background: var(--gold-light); padding: 6px 12px; border-radius: 6px; text-align: center; border: 1px solid var(--gold-premium); box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); white-space: nowrap;}
 
+        /* 📱 تحسينات خاصة بشاشات الجوال (Mobile Optimization) 📱 */
+        @media (max-width: 600px) {
+            .auth-container { padding: 25px; width: 95%; }
+            .content { padding: 60px 10px 30px; }
+            .model-container { height: 250px; margin-bottom: -20px; }
+            .user-profile-card { padding: 20px; border-radius: 16px; }
+            .stats { flex-direction: column; gap: 10px; }
+            .stat-box { width: 100%; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: right;}
+            .stat-box span { margin-top: 0; font-size: 24px; }
+            .stat-box::before { width: 4px; height: 100%; top: 0; left: 0; } /* تغيير الخط ليكون عمودي على الجوال */
+            .cards-grid { grid-template-columns: 1fr; gap: 15px;} /* تكديس البطاقات فوق بعضها */
+            .page-title { font-size: 20px; }
+            .auth-tabs button { font-size: 14px; padding: 10px; }
+            input, select, textarea { padding: 12px; font-size: 13px; }
+            .btn-primary { padding: 12px; font-size: 14px; }
+            #booking-details-form { padding: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -206,7 +224,7 @@
     <!-- 3. لوحة التحكم والأقسام -->
     <div id="dashboard-screen" class="screen">
         
-        <button class="menu-btn" onclick="toggleMenu()">☰ القائمة</button>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
         <div class="overlay" id="menu-overlay" onclick="toggleMenu()"></div>
 
         <!-- القائمة الجانبية -->
@@ -252,16 +270,16 @@
                 <div class="user-profile-card">
                     <h3 style="text-align: center;">مرحباً بك، <span id="profile-nickname" style="color: var(--gold-premium);">...</span></h3>
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <span style="display:inline-block; padding:5px 15px; background:rgba(10,25,49,0.05); border-radius:20px; font-size:14px; margin-top:10px;">
+                        <span style="display:inline-block; padding:5px 15px; background:rgba(10,25,49,0.05); border-radius:20px; font-size:13px; margin-top:10px;">
                             <strong style="color:var(--navy-dark);">الجوال:</strong> <span id="profile-phone">...</span> | 
                             <strong style="color:var(--navy-dark);">الوجهة الحالية:</strong> <span id="profile-guild" style="color:#10B981; font-weight:bold;">...</span>
                         </span>
                     </div>
 
                     <div class="stats">
-                        <div class="stat-box">إجمالي الرحلات<br><span id="profile-flights">0</span></div>
-                        <div class="stat-box">التذاكر المصدرة<br><span id="profile-tickets">0</span></div>
-                        <div class="stat-box warning">سجل الإنذارات<br><span id="profile-warnings">0</span></div>
+                        <div class="stat-box">إجمالي الرحلات<span id="profile-flights">0</span></div>
+                        <div class="stat-box">التذاكر المصدرة<span id="profile-tickets">0</span></div>
+                        <div class="stat-box warning">سجل الإنذارات<span id="profile-warnings">0</span></div>
                     </div>
                 </div>
             </div>
@@ -276,22 +294,22 @@
                         <p style="color:var(--text-muted); text-align:center; width:100%;">جاري إعداد مدرج الهبوط...</p>
                     </div>
 
-                    <div id="booking-details-form" style="display:none; background:white; padding:30px; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;">
-                        <h3 id="selected-guild-title" style="color:var(--navy-dark); text-align:center; border-bottom:2px dashed #E2E8F0; padding-bottom:20px; margin-top:0; font-weight:900;"></h3>
+                    <div id="booking-details-form" style="display:none; background:white; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;">
+                        <h3 id="selected-guild-title" style="color:var(--navy-dark); text-align:center; border-bottom:2px dashed #E2E8F0; padding-bottom:15px; margin-top:0; font-weight:900; font-size:18px;"></h3>
                         
                         <form onsubmit="handleBooking(event)">
                             <input type="hidden" id="book-destination">
                             
-                            <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:14px;">حدد مدة التأشيرة المطلوبة:</label>
-                            <select id="book-duration" required style="margin-bottom:25px; font-weight:700;">
+                            <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:13px;">حدد مدة التأشيرة المطلوبة:</label>
+                            <select id="book-duration" required style="margin-bottom:20px; font-weight:700;">
                                 <option value="" disabled selected>-- اختر المدة الزمنية --</option>
                                 <option value="1">يوم واحد (24 ساعة)</option>
                                 <option value="2">يومان (48 ساعة)</option>
                                 <option value="3">ثلاثة أيام (72 ساعة)</option>
                             </select>
                             
-                            <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:14px;">متطلبات إضافية (اختياري):</label>
-                            <textarea id="book-details" rows="3" placeholder="أضف أي ملاحظات لمسؤول الرحلة..." style="margin-bottom:25px; resize:none;"></textarea>
+                            <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:13px;">متطلبات إضافية (اختياري):</label>
+                            <textarea id="book-details" rows="3" placeholder="أضف أي ملاحظات لمسؤول الرحلة..." style="margin-bottom:20px; resize:none;"></textarea>
                             
                             <button type="submit" class="btn-primary" id="btn-book">إصدار طلب التذكرة</button>
                         </form>
@@ -453,7 +471,7 @@
                             if(i > 0 && guild[0]) {
                                 bookGuildsGrid.innerHTML += `
                                 <div class="profile-card guild-card" onclick="selectGuildToBook('${guild[0]}', this)">
-                                    <div style="width:100%; height:140px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
+                                    <div style="width:100%; height:120px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
                                         <img src="${guild[1]}" style="width:100%; height:100%; object-fit:cover;" alt="${guild[0]}">
                                     </div>
                                     <h3 style="margin-bottom:0;">وجهة: ${guild[0]}</h3>
@@ -468,11 +486,11 @@
                             if (i > 0 && pkg[0]) {
                                 pkgContainer.innerHTML += `
                                 <div class="profile-card">
-                                    <div style="width:100%; height:180px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
+                                    <div style="width:100%; height:140px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
                                         <img src="${pkg[1]}" style="width:100%; height:100%; object-fit:cover;" alt="صورة البكج">
                                     </div>
                                     <h3>${pkg[0]}</h3>
-                                    <p style="color:var(--text-muted); font-weight:700;">${pkg[2]}</p>
+                                    <p style="color:var(--text-muted); font-weight:700; font-size:13px;">${pkg[2]}</p>
                                     <button class="btn-action" onclick="switchView('view-booking')">اطلب الآن</button>
                                 </div>`;
                             }
@@ -487,7 +505,7 @@
                                 <div class="profile-card">
                                     <div class="avatar-placeholder"><img src="${sup[2]}" alt="المشرف"></div>
                                     <h3>${sup[1]}</h3>
-                                    <p>${sup[3]}</p>
+                                    <p style="font-size:13px;">${sup[3]}</p>
                                     <a href="https://wa.me/${sup[0]}" target="_blank" class="btn-action">محادثة واتساب</a>
                                 </div>`;
                             }
