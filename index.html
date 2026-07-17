@@ -3,137 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام حجز الرحلات - المملكة</title>
+    <title>نظام حجز الرحلات - الخطوط الملكية</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- استدعاء أوزان متعددة لخط كايرو لمظهر أكثر فخامة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 
     <style>
+        /* 🎨 الثيم الجديد: First Class Luxury */
         :root {
-            --font-en: 'Cairo', sans-serif;
-            --font-ar: 'Beirut', 'Cairo', sans-serif; 
-            --deep-blue: #005A9C;
-            --cloud-white: rgba(255, 255, 255, 0.95);
-            --text-dark: #333333;
-            --bg-gradient: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            --navy-dark: #0A1931;       /* كحلي ملكي عميق */
+            --navy-light: #150E56;      /* أزرق ليلي */
+            --gold-premium: #C5A059;    /* ذهبي شامبين */
+            --gold-light: #F3E5AB;      /* ذهبي فاتح */
+            --pearl-white: #F8F9FA;     /* أبيض لؤلؤي للخلفية */
+            --glass-bg: rgba(255, 255, 255, 0.75); /* زجاج مصنفر */
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-dark: #1A1A1A;
+            --text-muted: #6C757D;
         }
 
-        body { margin: 0; padding: 0; font-family: var(--font-ar), var(--font-en); background: var(--bg-gradient); background-attachment: fixed; color: var(--text-dark); overflow-x: hidden; min-height: 100vh; }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Cairo', sans-serif; 
+            background-color: var(--pearl-white); 
+            color: var(--text-dark); 
+            overflow-x: hidden; min-height: 100vh; 
+        }
 
-        /* الغيوم الخلفية */
-        .clouds-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
-        .cloud { position: absolute; background: #fff; border-radius: 50px; opacity: 0.6; animation: drift linear infinite; }
-        .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
-        .cloud::before { width: 50px; height: 50px; top: -20px; left: 10px; }
-        .cloud::after { width: 70px; height: 70px; top: -30px; right: 15px; }
-        .c1 { width: 120px; height: 40px; top: 10%; animation-duration: 35s; }
-        .c2 { width: 160px; height: 50px; top: 30%; animation-duration: 45s; transform: scale(1.2); opacity: 0.4; }
-        .c3 { width: 100px; height: 35px; top: 70%; animation-duration: 25s; }
-        @keyframes drift { from { right: -200px; } to { right: 110vw; } }
+        /* ✨ الإضاءة المحيطية المتحركة (بديل الغيوم للفخامة) ✨ */
+        .ambient-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; background: #f0f2f5; }
+        .glow-1 { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(197,160,89,0.15) 0%, rgba(255,255,255,0) 70%); top: -200px; right: -100px; filter: blur(60px); animation: float 20s infinite alternate ease-in-out; }
+        .glow-2 { position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(10,25,49,0.1) 0%, rgba(255,255,255,0) 70%); bottom: -200px; left: -200px; filter: blur(60px); animation: float 25s infinite alternate-reverse ease-in-out; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-50px, 50px) scale(1.1); } }
 
-        /* الشاشات */
+        /* التحكم بالشاشات */
         .screen { display: none; height: 100vh; width: 100vw; position: relative; z-index: 1; }
         .screen.active { display: flex; }
 
-        /* شاشة التحميل */
-        #loading-screen { flex-direction: column; justify-content: center; align-items: center; color: white; }
-        .plane-animation { width: 150px; animation: fly 2s infinite alternate; z-index: 2; object-fit: contain; min-height: 150px;}
-        @keyframes fly { 0% { transform: translateY(0px); } 100% { transform: translateY(-20px); } }
-        .loading-bar { width: 250px; height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        .progress { width: 0%; height: 100%; background: #ffffff; border-radius: 10px; animation: loadProgress 3s ease-in-out forwards; }
-        @keyframes loadProgress { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
+        /* 1. شاشة التحميل الملكية */
+        #loading-screen { flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle at center, var(--navy-light), var(--navy-dark)); color: var(--gold-premium); }
+        .plane-animation { width: 180px; animation: fly 2.5s infinite ease-in-out alternate; z-index: 2; object-fit: contain; min-height: 150px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
+        @keyframes fly { 0% { transform: translateY(10px) rotate(2deg); } 100% { transform: translateY(-15px) rotate(-2deg); } }
+        .loading-bar { width: 300px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 30px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: var(--gold-premium); border-radius: 10px; animation: loadProgress 3s ease-in-out forwards; box-shadow: 0 0 10px var(--gold-premium); }
+        @keyframes loadProgress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+        #loading-screen h2 { font-weight: 300; letter-spacing: 2px; margin-top: 20px; font-size: 20px; }
 
-        /* شاشة الدخول */
-        .auth-container { margin: auto; background: var(--cloud-white); padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; backdrop-filter: blur(10px); }
-        .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .auth-tabs button { flex: 1; padding: 12px; border: none; cursor: pointer; border-radius: 10px; font-weight: bold; background: rgba(0,0,0,0.05); transition: 0.3s; font-family: inherit; }
-        .auth-tabs button.active { background: var(--deep-blue); color: white; }
-        .auth-form { display: none; flex-direction: column; gap: 15px; }
+        /* 2. شاشة الدخول (تصميم زجاجي فاخر) */
+        .auth-container { margin: auto; background: var(--glass-bg); padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px rgba(10, 25, 49, 0.1); width: 90%; max-width: 420px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); }
+        .auth-tabs { display: flex; gap: 15px; margin-bottom: 30px; }
+        .auth-tabs button { flex: 1; padding: 14px; border: none; cursor: pointer; border-radius: 12px; font-weight: 700; background: transparent; color: var(--text-muted); transition: 0.3s; font-family: inherit; font-size: 16px; border: 1px solid transparent; }
+        .auth-tabs button.active { background: white; color: var(--navy-dark); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid var(--glass-border); }
+        .auth-form { display: none; flex-direction: column; gap: 20px; }
         .auth-form.active { display: flex; }
-        input, select, textarea { padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; outline: none; background: rgba(255,255,255,0.8); width: 100%; box-sizing: border-box; }
-        input:focus, select:focus, textarea:focus { border-color: var(--deep-blue); }
-        .btn-primary { background: var(--deep-blue); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; font-family: inherit; width: 100%; }
-        .btn-primary:disabled { background: #95a5a6; cursor: not-allowed; }
+        input, select, textarea { padding: 16px; border: 1px solid #E2E8F0; border-radius: 12px; font-family: inherit; outline: none; background: rgba(255,255,255,0.9); width: 100%; box-sizing: border-box; font-size: 15px; transition: 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--gold-premium); box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1); }
+        
+        .btn-primary { background: var(--navy-dark); color: var(--gold-premium); border: 1px solid var(--navy-dark); padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 16px; transition: all 0.3s ease; font-family: inherit; width: 100%; letter-spacing: 1px; }
+        .btn-primary:hover { background: var(--gold-premium); color: var(--navy-dark); border-color: var(--gold-premium); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2); }
+        .btn-primary:disabled { background: #CBD5E1; color: #64748B; border-color: #CBD5E1; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        /* القائمة الجانبية */
-        .menu-btn { position: absolute; top: 20px; right: 20px; background: white; border: none; font-size: 24px; color: var(--deep-blue); padding: 10px 15px; border-radius: 10px; cursor: pointer; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .sidebar { position: fixed; top: 0; right: -300px; width: 260px; background: var(--cloud-white); height: 100vh; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); transition: 0.4s; z-index: 101; display: flex; flex-direction: column; overflow-y: auto; }
+        /* 3. القائمة الجانبية (تصميم كحلي ملكي) */
+        .menu-btn { position: absolute; top: 20px; right: 20px; background: white; border: none; font-size: 24px; color: var(--navy-dark); padding: 10px 15px; border-radius: 12px; cursor: pointer; z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .sidebar { position: fixed; top: 0; right: -320px; width: 280px; background: var(--navy-dark); height: 100vh; padding: 30px 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.2); transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 101; display: flex; flex-direction: column; overflow-y: auto; color: white; }
         .sidebar.open { right: 0; }
-        .close-btn { align-self: flex-end; background: none; border: none; font-size: 24px; color: #ff4757; cursor: pointer; margin-bottom: 10px; }
-        .nav-section h4 { color: #888; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
-        .nav-links { list-style: none; padding: 0; margin: 0; margin-bottom: 20px; }
-        .nav-links a { text-decoration: none; color: var(--deep-blue); font-weight: bold; font-size: 15px; display: block; padding: 10px; border-radius: 10px; transition: 0.3s; cursor: pointer; margin-bottom: 8px; }
-        .nav-links a:hover, .nav-links a.active { background: var(--deep-blue); color: white; transform: translateX(-5px); }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99; }
+        .close-btn { align-self: flex-end; background: rgba(255,255,255,0.1); border: none; font-size: 20px; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        .close-btn:hover { background: var(--gold-premium); color: var(--navy-dark); }
+        .nav-section h4 { color: var(--gold-premium); font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; margin-bottom: 30px; }
+        .nav-links a { text-decoration: none; color: #E2E8F0; font-weight: 400; font-size: 16px; display: block; padding: 12px 15px; border-radius: 10px; transition: all 0.3s; cursor: pointer; margin-bottom: 5px; border-right: 3px solid transparent; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(197, 160, 89, 0.1); color: var(--gold-premium); border-right: 3px solid var(--gold-premium); font-weight: 700; transform: translateX(-5px); }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 49, 0.6); backdrop-filter: blur(4px); z-index: 99; }
         .overlay.active { display: block; }
 
-        /* المحتوى والأقسام */
-        .content { flex: 1; padding: 80px 20px 20px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
-        .view-section { display: none; width: 100%; max-width: 800px; animation: fadeIn 0.4s ease; flex-direction: column; align-items: center; }
+        /* المحتوى والبطاقات الزجاجية */
+        .content { flex: 1; padding: 80px 20px 40px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; }
+        .view-section { display: none; width: 100%; max-width: 900px; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); flex-direction: column; align-items: center; }
         .view-section.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* بطاقة المستخدم والـ 3D */
-        .model-container { width: 100%; height: 400px; display: flex; justify-content: center; }
+        /* مجسم 3D والملف الشخصي */
+        .model-container { width: 100%; height: 450px; display: flex; justify-content: center; margin-bottom: -40px; z-index: 1;}
         model-viewer { width: 100%; height: 100%; }
-        .user-profile-card { background: var(--cloud-white); padding: 25px; border-radius: 20px; width: 90%; max-width: 600px; margin-top: -20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;}
         
-        /* 🔥 تعديل جذري لتصميم صناديق الإحصائيات والإنذارات 🔥 */
-        .stats { display: flex; justify-content: space-between; margin-top: 20px; gap: 15px; text-align: center; }
+        .user-profile-card { background: var(--glass-bg); padding: 35px; border-radius: 24px; width: 100%; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.04); border: 1px solid white; backdrop-filter: blur(20px); z-index: 2; position: relative;}
+        .user-profile-card h3 { margin-top: 0; color: var(--navy-dark); font-size: 26px; font-weight: 900; }
+        .user-profile-card p { font-size: 16px; color: var(--text-muted); }
+        
+        /* 🔥 تصميم صناديق الإحصائيات الفخم (VIP Stats) 🔥 */
+        .stats { display: flex; justify-content: space-between; margin-top: 30px; gap: 20px; text-align: center; flex-wrap: wrap;}
         .stat-box { 
-            background: linear-gradient(145deg, #ffffff, #f0f4f8); 
-            padding: 15px; 
-            border-radius: 15px; 
-            font-weight: 800; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 16px; 
+            font-weight: 700; 
             font-size: 14px;
-            color: var(--deep-blue);
+            color: var(--text-muted);
             flex: 1; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
-            border: 1px solid #e1e8ed;
-            transition: transform 0.3s;
+            min-width: 120px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03); 
+            border: 1px solid #F1F5F9;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .stat-box:hover { transform: translateY(-3px); }
-        .stat-box span { display: block; font-size: 24px; font-weight: 900; color: #2c3e50; margin-top: 8px; }
+        .stat-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--navy-dark); }
+        .stat-box:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        .stat-box span { display: block; font-size: 32px; font-weight: 900; color: var(--navy-dark); margin-top: 10px; }
         
-        /* صندوق الإنذارات المميز */
-        .stat-box.warning { 
-            background: linear-gradient(145deg, #fff0f0, #ffe5e5);
-            border: 1px solid #ffcccc;
-            border-bottom: 4px solid #e74c3c;
-            color: #c0392b;
-        }
-        .stat-box.warning span { color: #e74c3c; }
+        /* صندوق الإنذارات */
+        .stat-box.warning { background: #FFFBFB; border-color: #FEE2E2; }
+        .stat-box.warning::before { background: #EF4444; }
+        .stat-box.warning span { color: #EF4444; }
         
-        /* البطاقات الإدارية والديناميكية */
-        .page-title { color: white; text-shadow: 1px 1px 5px rgba(0,0,0,0.3); margin-bottom: 20px; text-align: center; }
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; }
-        .profile-card { background: rgba(255,255,255,0.95); padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s, border 0.3s; }
-        .profile-card:hover { transform: translateY(-5px); }
-        .avatar-placeholder { width: 100px; height: 100px; background: #e0e0e0; border-radius: 50%; margin: 0 auto 15px; border: 3px solid var(--deep-blue); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-card h3 { margin: 0 0 5px; color: var(--deep-blue); font-weight: 800;}
-        .profile-card p { margin: 0; color: #666; font-size: 14px; }
-        .btn-action { margin-top: 15px; background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; width: 100%; font-family: inherit; font-weight: bold; text-decoration: none; display: block; box-sizing: border-box;}
+        /* العناوين والبطاقات الديناميكية */
+        .page-title { color: var(--navy-dark); margin-bottom: 30px; text-align: center; font-weight: 900; font-size: 28px; position: relative; padding-bottom: 15px;}
+        .page-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--gold-premium); border-radius: 2px;}
         
-        /* جداول الطلبات والعدادات */
-        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background: var(--deep-blue); color: white; }
-        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; }
-        .bg-pending { background: #f1c40f; color: #333; }
-        .bg-active { background: #2ecc71; }
-        .bg-rejected { background: #e74c3c; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; width: 100%; }
+        
+        /* تصميم البطاقات (وجهات، بكجات، مشرفين) */
+        .profile-card { background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.04); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #F1F5F9; position: relative; overflow: hidden;}
+        .profile-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(10, 25, 49, 0.1); border-color: var(--gold-light); }
+        .guild-card.selected { border: 3px solid var(--gold-premium); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(197, 160, 89, 0.2); }
 
-        /* تصميم العداد التنازلي */
-        .countdown-timer { display: block; margin-top: 8px; font-size: 13px; font-weight: 800; color: #e67e22; background: #fff3e0; padding: 5px; border-radius: 5px; text-align: center; border: 1px solid #ffe0b2; }
+        .avatar-placeholder { width: 110px; height: 110px; background: #F8F9FA; border-radius: 50%; margin: 0 auto 20px; border: 4px solid var(--pearl-white); box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-card h3 { margin: 0 0 8px; color: var(--navy-dark); font-weight: 900; font-size: 20px;}
+        
+        .btn-action { margin-top: 20px; background: var(--pearl-white); color: var(--navy-dark); border: 1px solid #E2E8F0; padding: 12px 20px; border-radius: 10px; cursor: pointer; width: 100%; font-family: inherit; font-weight: 700; text-decoration: none; display: block; box-sizing: border-box; transition: 0.3s;}
+        .btn-action:hover { background: var(--navy-dark); color: var(--gold-premium); border-color: var(--navy-dark); }
+        
+        /* الجداول الفخمة */
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;}
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 20px; text-align: right; border-bottom: 1px solid #F8F9FA; }
+        th { background: var(--navy-dark); color: var(--gold-premium); font-weight: 700; letter-spacing: 1px; font-size: 14px;}
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #F8F9FA; }
+        
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 900; color: white; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .bg-pending { background: #F59E0B; }
+        .bg-active { background: #10B981; }
+        .bg-rejected { background: #EF4444; }
+
+        /* العداد التنازلي */
+        .countdown-timer { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 900; color: var(--navy-dark); background: var(--gold-light); padding: 8px 15px; border-radius: 8px; text-align: center; border: 1px solid var(--gold-premium); box-shadow: 0 4px 10px rgba(197, 160, 89, 0.2);}
 
     </style>
 </head>
 <body>
 
-    <div class="clouds-container">
-        <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <!-- الخلفية المحيطية الفاخرة -->
+    <div class="ambient-background">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
     </div>
 
     <!-- 1. شاشة التحميل -->
@@ -146,33 +171,38 @@
         <img src="" alt="شعار التحميل" class="plane-animation" id="loading-logo">
         
         <div class="loading-bar"><div class="progress"></div></div>
-        <h2>جاري التجهيز للتحليق...</h2>
+        <h2>جاري تحضير مقصورة القيادة...</h2>
     </div>
 
     <!-- 2. شاشة المصادقة -->
     <div id="auth-screen" class="screen">
         <div class="auth-container">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h2 style="color: var(--navy-dark); margin: 0; font-weight: 900; font-size: 24px;">الخطوط الملكية</h2>
+                <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 14px;">بوابة المسافرين والسفراء</p>
+            </div>
+
             <div class="auth-tabs">
                 <button onclick="toggleAuth('login')" class="active" id="tab-login">تسجيل دخول</button>
-                <button onclick="toggleAuth('signup')" id="tab-signup">إنشاء حساب</button>
+                <button onclick="toggleAuth('signup')" id="tab-signup">طلب عضوية</button>
             </div>
             
             <form id="form-login" class="auth-form active" onsubmit="handleLogin(event)">
-                <input type="tel" id="login-phone" placeholder="رقم الجوال" required>
-                <input type="password" id="login-pass" placeholder="كلمة السر" required>
-                <button type="submit" class="btn-primary" id="btn-login">دخول</button>
+                <input type="tel" id="login-phone" placeholder="رقم الجوال الخاص بك" required>
+                <input type="password" id="login-pass" placeholder="كلمة المرور" required>
+                <button type="submit" class="btn-primary" id="btn-login">دخول للوحة القيادة</button>
             </form>
             
             <form id="form-signup" class="auth-form" onsubmit="handleSignup(event)">
                 <input type="text" id="signup-name" placeholder="اللقب (مثال: محمد)" required>
                 <input type="tel" id="signup-phone" placeholder="رقم الجوال" required>
-                <input type="password" id="signup-pass" placeholder="كلمة السر" required>
+                <input type="password" id="signup-pass" placeholder="كلمة المرور" required>
                 <select id="signup-guild" required>
-                    <option value="" disabled selected>اختر النقابة المطلوبة</option>
+                    <option value="" disabled selected>حدد الوجهة المطلوبة للانتساب</option>
                     <option value="Night">نقابة Night</option>
                     <option value="Sumeru">نقابة Sumeru</option>
                 </select>
-                <button type="submit" class="btn-primary" id="btn-signup">طلب الانضمام للنقابة</button>
+                <button type="submit" class="btn-primary" id="btn-signup">إرسال طلب الانتساب</button>
             </form>
         </div>
     </div>
@@ -190,28 +220,28 @@
             <div class="nav-section">
                 <h4>الرئيسية</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-home')" class="active">🏠 الملف الشخصي</a></li>
+                    <li><a onclick="switchView('view-home')" class="active">🏠 بطاقة الصعود</a></li>
                 </ul>
             </div>
 
             <div class="nav-section">
-                <h4>خدمات الحجز</h4>
+                <h4>الرحلات والحجوزات</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-booking')">✈️ حجز رحلة (النقابات)</a></li>
-                    <li><a onclick="switchView('view-packages')">🧳 بكجات السفر المتاحة</a></li>
-                    <li><a onclick="switchView('view-tickets')">🎫 تذاكري الحالية</a></li>
+                    <li><a onclick="switchView('view-booking')">✈️ حجز وجهة جديدة</a></li>
+                    <li><a onclick="switchView('view-packages')">🧳 استكشاف البكجات</a></li>
+                    <li><a onclick="switchView('view-tickets')">🎫 سجل السفر والتذاكر</a></li>
                 </ul>
             </div>
             
             <div class="nav-section">
-                <h4>الإدارة والتواصل</h4>
+                <h4>خدمات كبار الشخصيات</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-supervisors')">📞 المشرفين للتواصل</a></li>
-                    <li id="nav-embassy" style="display: none;"><a href="admin.html" target="_blank">🏛️ الدخول للإدارة العليا</a></li>
+                    <li><a onclick="switchView('view-supervisors')">📞 طاقم الإشراف</a></li>
+                    <li id="nav-embassy" style="display: none;"><a href="admin.html" target="_blank" style="color:var(--gold-premium);">🏛️ الدخول للإدارة العليا</a></li>
                 </ul>
             </div>
             
-            <button class="btn-primary" style="margin-top:20px; background:#e74c3c;" onclick="location.reload()">تسجيل خروج</button>
+            <button class="btn-primary" style="margin-top:auto; background:rgba(255,255,255,0.1); border:none; color:white;" onclick="location.reload()">تسجيل خروج آمن</button>
         </aside>
 
         <!-- منطقة الأقسام الديناميكية -->
@@ -227,73 +257,78 @@
                     -->
                     <model-viewer src="earth.glb" auto-rotate camera-controls disable-zoom></model-viewer>
                 </div>
+                
                 <div class="user-profile-card">
-                    <h3>مرحباً، <span id="profile-nickname">...</span></h3>
-                    <p>رقم الجوال: <span id="profile-phone">...</span></p>
-                    <p style="font-weight:bold;">النقابة التابع لها: <span id="profile-guild" style="color:#e67e22;">...</span></p>
+                    <h3 style="text-align: center;">مرحباً بك، <span id="profile-nickname" style="color: var(--gold-premium);">...</span></h3>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <span style="display:inline-block; padding:5px 15px; background:rgba(10,25,49,0.05); border-radius:20px; font-size:14px; margin-top:10px;">
+                            <strong style="color:var(--navy-dark);">الجوال:</strong> <span id="profile-phone">...</span> | 
+                            <strong style="color:var(--navy-dark);">الوجهة الحالية:</strong> <span id="profile-guild" style="color:#10B981; font-weight:bold;">...</span>
+                        </span>
+                    </div>
+
                     <div class="stats">
-                        <div class="stat-box">السفرات<br><span id="profile-flights">0</span></div>
-                        <div class="stat-box">التذاكر<br><span id="profile-tickets">0</span></div>
-                        <!-- صندوق الإنذارات المحدث -->
-                        <div class="stat-box warning">الإنذارات<br><span id="profile-warnings">0</span></div>
+                        <div class="stat-box">إجمالي الرحلات<br><span id="profile-flights">0</span></div>
+                        <div class="stat-box">التذاكر المصدرة<br><span id="profile-tickets">0</span></div>
+                        <!-- صندوق الإنذارات البارز -->
+                        <div class="stat-box warning">سجل الإنذارات<br><span id="profile-warnings">0</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- قسم 2: حجز رحلة (التصميم التفاعلي الجديد) -->
+            <!-- قسم 2: حجز رحلة -->
             <div id="view-booking" class="view-section">
-                <h2 class="page-title">وجهات السفر المتاحة</h2>
+                <h2 class="page-title">وجهات الطيران المتاحة</h2>
                 
-                <div class="user-profile-card" style="margin-top:0; background: transparent; box-shadow: none; padding: 0;">
+                <div class="user-profile-card" style="margin-top:0; background: transparent; box-shadow: none; padding: 0; border: none;">
                     
                     <!-- شبكة النقابات التفاعلية -->
                     <div class="cards-grid" id="booking-guilds-grid">
-                        <p style="color:white; text-align:center; width:100%;">جاري تحميل النقابات...</p>
+                        <p style="color:var(--text-muted); text-align:center; width:100%;">جاري إعداد مدرج الهبوط...</p>
                     </div>
 
                     <!-- نموذج اختيار المدة (يظهر بعد اختيار النقابة) -->
-                    <div id="booking-details-form" style="display:none; background:white; padding:25px; border-radius:15px; margin-top:25px; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
-                        <h3 id="selected-guild-title" style="color:var(--deep-blue); text-align:center; border-bottom:2px dashed #eee; padding-bottom:15px; margin-top:0;"></h3>
+                    <div id="booking-details-form" style="display:none; background:white; padding:30px; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;">
+                        <h3 id="selected-guild-title" style="color:var(--navy-dark); text-align:center; border-bottom:2px dashed #E2E8F0; padding-bottom:20px; margin-top:0; font-weight:900;"></h3>
                         
                         <form onsubmit="handleBooking(event)">
                             <input type="hidden" id="book-destination">
                             
-                            <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">حدد مدة الزيارة:</label>
-                            <select id="book-duration" required style="margin-bottom:20px;">
-                                <option value="" disabled selected>اختر المدة...</option>
+                            <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:14px;">حدد مدة التأشيرة المطلوبة:</label>
+                            <select id="book-duration" required style="margin-bottom:25px; font-weight:700;">
+                                <option value="" disabled selected>-- اختر المدة الزمنية --</option>
                                 <option value="1">يوم واحد (24 ساعة)</option>
                                 <option value="2">يومان (48 ساعة)</option>
                                 <option value="3">ثلاثة أيام (72 ساعة)</option>
                             </select>
                             
-                            <label style="font-weight:bold; color:var(--deep-blue); margin-bottom:10px; display:block;">ملاحظات إضافية (اختياري):</label>
-                            <textarea id="book-details" rows="3" placeholder="اكتب أي متطلبات خاصة هنا..." style="margin-bottom:20px;"></textarea>
+                            <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:14px;">متطلبات إضافية (اختياري):</label>
+                            <textarea id="book-details" rows="3" placeholder="أضف أي ملاحظات لمسؤول الرحلة..." style="margin-bottom:25px; resize:none;"></textarea>
                             
-                            <button type="submit" class="btn-primary" id="btn-book">تأكيد وإرسال طلب الحجز</button>
+                            <button type="submit" class="btn-primary" id="btn-book">إصدار طلب التذكرة</button>
                         </form>
                     </div>
-
                 </div>
             </div>
 
             <!-- قسم 3: البكجات -->
             <div id="view-packages" class="view-section">
-                <h2 class="page-title">بكجات السفر المتاحة</h2>
+                <h2 class="page-title">العروض والبكجات الفاخرة</h2>
                 <div class="cards-grid" id="packages-container">
-                    <p style="color:white; text-align:center; width:100%;">جاري تحميل البكجات...</p>
+                    <p style="color:var(--text-muted); text-align:center; width:100%;">جاري تحميل العروض...</p>
                 </div>
             </div>
 
             <!-- قسم 4: تذاكري والعداد التنازلي -->
             <div id="view-tickets" class="view-section">
-                <h2 class="page-title">طلباتي وتذاكري</h2>
+                <h2 class="page-title">سجل الرحلات والتذاكر</h2>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>رقم الطلب</th>
-                                <th>الوجهة</th>
-                                <th>تفاصيل الزيارة</th>
+                                <th>رقم التذكرة</th>
+                                <th>جهة الوصول</th>
+                                <th>التفاصيل</th>
                                 <th>حالة التذكرة</th>
                             </tr>
                         </thead>
@@ -305,7 +340,7 @@
 
             <!-- قسم 5: المشرفين -->
             <div id="view-supervisors" class="view-section">
-                <h2 class="page-title">تواصل مع المشرفين</h2>
+                <h2 class="page-title">طاقم الإشراف والضيافة</h2>
                 <div class="cards-grid" id="supervisors-container">
                 </div>
             </div>
@@ -321,20 +356,15 @@
         
         let loggedInUserPhone = "";
 
-        // التحميل المبدئي
         window.addEventListener('load', () => {
-            // إضافة صورة مؤقتة في حال لم يضع المستخدم رابط صورة التحميل
             const logo = document.getElementById('loading-logo');
             if(logo.getAttribute('src') === "") {
                 logo.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"; 
             }
-
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.remove('active');
                 document.getElementById('auth-screen').classList.add('active');
             }, 3000); 
-            
-            // تشغيل محرك العدادات التنازلية
             startCountdowns();
         });
 
@@ -361,9 +391,7 @@
             toggleMenu();
         }
 
-        // ==========================================
-        // 1. إنشاء الحساب
-        // ==========================================
+        // 1. طلب العضوية
         async function handleSignup(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-signup');
@@ -384,27 +412,22 @@
                 });
                 const result = await response.json();
                 if(result.status === "success") {
-                    alert("تم إرسال طلب الانضمام لنقابة " + guild + " بنجاح. يرجى انتظار الموافقة.");
+                    alert("تم استلام طلبك للوجهة: " + guild + " بنجاح. يرجى انتظار توثيق الإدارة.");
                     document.getElementById('form-signup').reset();
                     toggleAuth('login');
                 }
-            } catch (error) {
-                alert("حدث خطأ في الاتصال.");
-            } finally {
-                btn.innerText = "طلب الانضمام للنقابة"; btn.disabled = false;
-            }
+            } catch (error) { alert("حدث خطأ في الاتصال برج المراقبة."); } 
+            finally { btn.innerText = "إرسال طلب الانتساب"; btn.disabled = false; }
         }
 
-        // ==========================================
-        // 2. تسجيل الدخول وتوزيع البيانات (Guilds, Tickets, etc)
-        // ==========================================
+        // 2. الدخول وتوزيع البيانات
         async function handleLogin(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-login');
             const phone = document.getElementById('login-phone').value;
             const pass = document.getElementById('login-pass').value;
 
-            btn.innerText = "جاري مصادقة البيانات..."; btn.disabled = true;
+            btn.innerText = "جاري التحقق من الهوية..."; btn.disabled = true;
 
             try {
                 const response = await fetch(SCRIPT_URL + "?admin=true");
@@ -415,25 +438,22 @@
 
                 for (let i = 0; i < db.users.length; i++) {
                     if (db.users[i][0] == phone && db.users[i][1] == pass) {
-                        userFound = true;
-                        userData = db.users[i];
-                        break;
+                        userFound = true; userData = db.users[i]; break;
                     }
                 }
 
                 if (userFound) {
                     if (userData[5] === "pending") {
-                        alert("حسابك بانتظار موافقة الإدارة أو السفير.");
+                        alert("بطاقتك بانتظار التوثيق من قبل السلطات.");
                     } else if (userData[5] === "rejected") {
-                        alert("عذراً، تم رفض طلب انضمامك.");
+                        alert("عذراً، تم رفض طلبك.");
                     } else {
                         loggedInUserPhone = userData[0];
 
-                        // 1. تحديث الملف الشخصي
+                        // تحديث الإحصائيات
                         document.getElementById('profile-nickname').innerText = userData[2];
                         document.getElementById('profile-phone').innerText = userData[0];
                         document.getElementById('profile-guild').innerText = userData[4];
-                        document.getElementById('profile-guild').style.color = "#27ae60"; 
                         document.getElementById('profile-flights').innerText = userData[6] || 0;
                         document.getElementById('profile-tickets').innerText = userData[7] || 0;
                         document.getElementById('profile-warnings').innerText = userData[8] || 0;
@@ -442,40 +462,39 @@
                             document.getElementById('nav-embassy').style.display = "block";
                         }
 
-                        // 2. رسم النقابات (Guilds) في قسم الحجوزات كمربعات صور
+                        // رسم الوجهات (النقابات)
                         const bookGuildsGrid = document.getElementById('booking-guilds-grid');
                         bookGuildsGrid.innerHTML = '';
                         db.guilds.forEach((guild, i) => {
                             if(i > 0 && guild[0]) {
                                 bookGuildsGrid.innerHTML += `
-                                <div class="profile-card guild-card" onclick="selectGuildToBook('${guild[0]}', this)" style="cursor:pointer; border: 3px solid transparent;">
-                                    <div style="width:100%; height:120px; border-radius:12px; overflow:hidden; margin-bottom:10px;">
+                                <div class="profile-card guild-card" onclick="selectGuildToBook('${guild[0]}', this)">
+                                    <div style="width:100%; height:140px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
                                         <img src="${guild[1]}" style="width:100%; height:100%; object-fit:cover;" alt="${guild[0]}">
                                     </div>
-                                    <h3>نقابة ${guild[0]}</h3>
-                                    <span style="font-size:12px; color:#666;">اضغط للحجز</span>
+                                    <h3 style="margin-bottom:0;">وجهة: ${guild[0]}</h3>
                                 </div>`;
                             }
                         });
 
-                        // 3. رسم البكجات
+                        // رسم البكجات
                         const pkgContainer = document.getElementById('packages-container');
                         pkgContainer.innerHTML = '';
                         db.packages.forEach((pkg, i) => {
                             if (i > 0 && pkg[0]) {
                                 pkgContainer.innerHTML += `
                                 <div class="profile-card">
-                                    <div style="width:100%; height:160px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
+                                    <div style="width:100%; height:180px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
                                         <img src="${pkg[1]}" style="width:100%; height:100%; object-fit:cover;" alt="صورة البكج">
                                     </div>
                                     <h3>${pkg[0]}</h3>
-                                    <p style="color:var(--deep-blue); font-weight:bold;">${pkg[2]}</p>
-                                    <button class="btn-action" onclick="switchView('view-booking')">اذهب لقسم الحجوزات</button>
+                                    <p style="color:var(--text-muted); font-weight:700;">${pkg[2]}</p>
+                                    <button class="btn-action" onclick="switchView('view-booking')">اطلب الآن</button>
                                 </div>`;
                             }
                         });
 
-                        // 4. رسم المشرفين
+                        // رسم المشرفين
                         const supContainer = document.getElementById('supervisors-container');
                         supContainer.innerHTML = '';
                         db.supervisors.forEach((sup, i) => {
@@ -485,12 +504,12 @@
                                     <div class="avatar-placeholder"><img src="${sup[2]}" alt="المشرف"></div>
                                     <h3>${sup[1]}</h3>
                                     <p>${sup[3]}</p>
-                                    <a href="https://wa.me/${sup[0]}" target="_blank" class="btn-action">تواصل واتساب</a>
+                                    <a href="https://wa.me/${sup[0]}" target="_blank" class="btn-action">محادثة واتساب</a>
                                 </div>`;
                             }
                         });
 
-                        // 5. رسم التذاكر وإنشاء العدادات الزمنية
+                        // رسم التذاكر والعدادات
                         const tixContainer = document.getElementById('tbody-my-tickets');
                         tixContainer.innerHTML = '';
                         let hasTickets = false;
@@ -499,30 +518,26 @@
                             if (i > 0 && req[1] == loggedInUserPhone) {
                                 hasTickets = true;
                                 let statusClass = req[4] === 'pending' ? 'pending' : (req[4] === 'active' ? 'active' : 'rejected');
-                                let statusText = req[4] === 'pending' ? 'بانتظار الموافقة' : (req[4] === 'active' ? 'مصرح بالدخول' : 'مرفوض');
+                                let statusText = req[4] === 'pending' ? 'قيد المراجعة' : (req[4] === 'active' ? 'مصرح بالصعود' : 'مرفوض');
                                 
-                                // استخراج المدة وتفعيل العداد إذا كانت التذكرة فعالة
                                 let timerHTML = '';
                                 if (req[4] === 'active') {
-                                    // استخراج الأيام من نص التفاصيل (مثال: المدة: 2 أيام)
                                     let days = 1;
                                     const match = req[3].match(/المدة:\s*(\d+)/);
                                     if(match) days = parseInt(match[1]);
 
-                                    // تحديد وقت النهاية وتخزينه في المتصفح لضمان استمرارية العداد
                                     let endTime = localStorage.getItem('ticket_end_' + req[0]);
                                     if (!endTime) {
                                         endTime = Date.now() + (days * 24 * 60 * 60 * 1000);
                                         localStorage.setItem('ticket_end_' + req[0], endTime);
                                     }
-                                    
-                                    timerHTML = `<span class="countdown-timer" data-endtime="${endTime}">جاري حساب الوقت...</span>`;
+                                    timerHTML = `<br><span class="countdown-timer" data-endtime="${endTime}">جاري المعايرة...</span>`;
                                 }
 
                                 tixContainer.innerHTML += `
                                 <tr>
-                                    <td><strong>${req[0]}</strong></td>
-                                    <td>${req[2]}</td>
+                                    <td style="color:var(--navy-dark); font-weight:900;">${req[0]}</td>
+                                    <td><strong>${req[2]}</strong></td>
                                     <td>${req[3]}</td>
                                     <td>
                                         <span class="badge bg-${statusClass}">${statusText}</span>
@@ -531,55 +546,44 @@
                                 </tr>`;
                             }
                         });
-                        if(!hasTickets) tixContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد طلبات أو تذاكر حالية.</td></tr>';
+                        if(!hasTickets) tixContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد رحلات مجدولة حالياً.</td></tr>';
 
                         document.getElementById('auth-screen').classList.remove('active');
                         document.getElementById('dashboard-screen').classList.add('active');
                     }
                 } else {
-                    alert("بيانات الدخول غير صحيحة.");
+                    alert("عفواً، بيانات الوصول غير صحيحة.");
                 }
-            } catch (error) {
-                alert("حدث خطأ في جلب البيانات.");
-            } finally {
-                btn.innerText = "دخول"; btn.disabled = false;
-            }
+            } catch (error) { alert("حدث خطأ في الاتصال بالشبكة."); } 
+            finally { btn.innerText = "دخول للوحة القيادة"; btn.disabled = false; }
         }
 
-        // ==========================================
-        // التفاعل مع اختيار النقابة في الحجز
-        // ==========================================
+        // اختيار النقابة للحجز
         function selectGuildToBook(guildName, cardElement) {
-            // إزالة التحديد من كل البطاقات
-            document.querySelectorAll('.guild-card').forEach(card => card.style.borderColor = 'transparent');
-            // تحديد البطاقة المضغوطة باللون الأزرق
-            cardElement.style.borderColor = 'var(--deep-blue)';
+            document.querySelectorAll('.guild-card').forEach(card => card.classList.remove('selected'));
+            cardElement.classList.add('selected');
             
-            // إظهار فورم اختيار المدة
             document.getElementById('booking-details-form').style.display = 'block';
-            document.getElementById('selected-guild-title').innerText = 'وجهة الرحلة: نقابة ' + guildName;
+            document.getElementById('selected-guild-title').innerText = 'تأكيد وجهة السفر: ' + guildName;
             document.getElementById('book-destination').value = guildName;
             
-            // النزول بالشاشة للفورم بلطف
-            document.getElementById('booking-details-form').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                document.getElementById('booking-details-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
 
-        // ==========================================
-        // 3. إرسال طلب السفر
-        // ==========================================
+        // إرسال طلب الحجز
         async function handleBooking(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-book');
-            btn.innerText = "جاري إرسال الطلب..."; btn.disabled = true;
+            btn.innerText = "جاري إصدار التذكرة..."; btn.disabled = true;
 
             const reqDest = document.getElementById('book-destination').value;
             const duration = document.getElementById('book-duration').value;
             const notes = document.getElementById('book-details').value;
             
-            // دمج المدة مع الملاحظات ليتم قراءتها برمجياً لاحقاً للعداد
-            const compiledDetails = `المدة: ${duration} أيام | الملاحظات: ${notes || 'لا يوجد'}`;
-            
-            const randomId = "REQ-" + Math.floor(Math.random() * 90000 + 10000); 
+            const compiledDetails = `المدة: ${duration} أيام | التفاصيل: ${notes || 'لا يوجد'}`;
+            const randomId = "TK-" + Math.floor(Math.random() * 90000 + 10000); 
             const newRequestData = [randomId, loggedInUserPhone, reqDest, compiledDetails, "pending"];
 
             try {
@@ -590,25 +594,17 @@
                 });
                 const result = await response.json();
                 if(result.status === "success") {
-                    alert("تم إرسال طلب الزيارة بنجاح! سيتم تفعيل العداد الزمني فور قبول الإدارة للطلب.");
-                    
-                    // إعادة ضبط الفورم
+                    alert("تم إرسال طلب التذكرة بنجاح! الرمز المرجعي: " + randomId + "\nسيبدأ العداد فور تصديق الإدارة.");
                     document.getElementById('book-details').value = '';
                     document.getElementById('booking-details-form').style.display = 'none';
-                    document.querySelectorAll('.guild-card').forEach(c => c.style.borderColor = 'transparent');
-                    
+                    document.querySelectorAll('.guild-card').forEach(c => c.classList.remove('selected'));
                     switchView('view-tickets'); 
                 }
-            } catch (error) {
-                alert("حدث خطأ أثناء إرسال الطلب.");
-            } finally {
-                btn.innerText = "تأكيد وإرسال طلب الحجز"; btn.disabled = false;
-            }
+            } catch (error) { alert("فشل الإرسال."); } 
+            finally { btn.innerText = "إصدار طلب التذكرة"; btn.disabled = false; }
         }
 
-        // ==========================================
-        // 4. محرك العدادات التنازلية (Live Countdown)
-        // ==========================================
+        // محرك العداد الزمني (Live Countdown)
         function startCountdowns() {
             setInterval(() => {
                 document.querySelectorAll('.countdown-timer').forEach(el => {
@@ -617,20 +613,19 @@
                     const diff = endTime - now;
 
                     if (diff <= 0) {
-                        el.innerText = "انتهت صلاحية الزيارة ✖";
-                        el.style.color = "#7f8c8d";
-                        el.style.background = "#ecf0f1";
-                        el.style.border = "1px solid #bdc3c7";
+                        el.innerHTML = "✖ انتهت صلاحية التأشيرة";
+                        el.style.color = "#EF4444";
+                        el.style.background = "#FEE2E2";
+                        el.style.borderColor = "#FCA5A5";
                     } else {
-                        // حساب الساعات، الدقائق، والثواني
-                        const h = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60)); // عرض إجمالي الساعات
+                        const h = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60)); 
                         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                         const s = Math.floor((diff % (1000 * 60)) / 1000);
                         
-                        el.innerText = `⏳ متبقي للزيارة: ${h}س و ${m}د و ${s}ث`;
+                        el.innerText = `⏳ متبقي: ${h}س ${m}د ${s}ث`;
                     }
                 });
-            }, 1000); // تحديث كل ثانية
+            }, 1000);
         }
     </script>
 </body>
