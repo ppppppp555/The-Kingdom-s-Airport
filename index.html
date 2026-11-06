@@ -7,6 +7,7 @@
     
     <!-- استدعاء أوزان متعددة لخط كايرو لمظهر أكثر فخامة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- استدعاء مكتبة المجسم ثلاثي الأبعاد -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
 
     <style>
@@ -83,37 +84,20 @@
         .view-section.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* مجسم 3D والملف الشخصي */
-        .model-container { width: 100%; height: 350px; display: flex; justify-content: center; margin-bottom: -30px; z-index: 1;}
-        model-viewer { width: 100%; height: 100%; }
+        /* 🔥 تعديلات المجسم 3D لحل مشكلة الحركة 🔥 */
+        .model-container { width: 100%; height: 350px; display: flex; justify-content: center; margin-bottom: -15px; position: relative; z-index: 10; } /* رفعنا z-index ليظل فوق البطاقة */
+        model-viewer { width: 100%; height: 100%; outline: none; }
         
         .user-profile-card { background: var(--glass-bg); padding: 25px; border-radius: 20px; width: 100%; box-sizing: border-box; box-shadow: 0 15px 30px rgba(0,0,0,0.04); border: 1px solid white; backdrop-filter: blur(20px); z-index: 2; position: relative;}
         .user-profile-card h3 { margin-top: 0; color: var(--navy-dark); font-size: 22px; font-weight: 900; }
         .user-profile-card p { font-size: 14px; color: var(--text-muted); }
         
-        /* 🔥 تصميم صناديق الإحصائيات الفخم المتجاوب 🔥 */
+        /* تصميم صناديق الإحصائيات الفخم المتجاوب */
         .stats { display: flex; justify-content: space-between; margin-top: 25px; gap: 15px; text-align: center; flex-wrap: wrap;}
-        .stat-box { 
-            background: white; 
-            padding: 15px; 
-            border-radius: 14px; 
-            font-weight: 700; 
-            font-size: 13px;
-            color: var(--text-muted);
-            flex: 1; 
-            min-width: 100px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.03); 
-            border: 1px solid #F1F5F9;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
+        .stat-box { background: white; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 13px; color: var(--text-muted); flex: 1; min-width: 100px; box-shadow: 0 8px 15px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; transition: all 0.3s ease; position: relative; overflow: hidden; box-sizing: border-box; }
         .stat-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--navy-dark); }
         .stat-box:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.06); }
         .stat-box span { display: block; font-size: 28px; font-weight: 900; color: var(--navy-dark); margin-top: 8px; }
-        
-        /* صندوق الإنذارات */
         .stat-box.warning { background: #FFFBFB; border-color: #FEE2E2; }
         .stat-box.warning::before { background: #EF4444; }
         .stat-box.warning span { color: #EF4444; }
@@ -121,10 +105,8 @@
         /* العناوين والبطاقات الديناميكية */
         .page-title { color: var(--navy-dark); margin-bottom: 25px; text-align: center; font-weight: 900; font-size: 22px; position: relative; padding-bottom: 12px;}
         .page-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: var(--gold-premium); border-radius: 2px;}
-        
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; }
         
-        /* تصميم البطاقات (وجهات، بكجات، مشرفين) */
         .profile-card { background: white; padding: 20px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.04); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #F1F5F9; position: relative; overflow: hidden; box-sizing: border-box;}
         .profile-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(10, 25, 49, 0.08); border-color: var(--gold-light); }
         .guild-card.selected { border: 3px solid var(--gold-premium); transform: translateY(-8px); box-shadow: 0 15px 30px rgba(197, 160, 89, 0.2); }
@@ -136,7 +118,6 @@
         .btn-action { margin-top: 15px; background: var(--pearl-white); color: var(--navy-dark); border: 1px solid #E2E8F0; padding: 10px 15px; border-radius: 10px; cursor: pointer; width: 100%; font-family: inherit; font-weight: 700; text-decoration: none; display: block; box-sizing: border-box; transition: 0.3s;}
         .btn-action:hover { background: var(--navy-dark); color: var(--gold-premium); border-color: var(--navy-dark); }
         
-        /* الجداول الفخمة المتجاوبة للجوال */
         .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 16px; box-shadow: 0 15px 30px rgba(0,0,0,0.05); border: 1px solid #F1F5F9; -webkit-overflow-scrolling: touch;}
         table { width: 100%; border-collapse: collapse; min-width: 500px; }
         th, td { padding: 15px; text-align: right; border-bottom: 1px solid #F8F9FA; font-size: 13px;}
@@ -145,50 +126,38 @@
         tr:hover td { background: #F8F9FA; }
         
         .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: 900; color: white; display: inline-block; box-shadow: 0 3px 5px rgba(0,0,0,0.1); white-space: nowrap;}
-        .bg-pending { background: #F59E0B; }
         .bg-active { background: #10B981; }
-        .bg-rejected { background: #EF4444; }
 
-        /* العداد التنازلي */
         .countdown-timer { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 900; color: var(--navy-dark); background: var(--gold-light); padding: 6px 12px; border-radius: 6px; text-align: center; border: 1px solid var(--gold-premium); box-shadow: 0 3px 8px rgba(197, 160, 89, 0.2); white-space: nowrap;}
 
-        /* 📱 تحسينات خاصة بشاشات الجوال (Mobile Optimization) 📱 */
+        /* تحسينات الموبايل */
         @media (max-width: 600px) {
             .auth-container { padding: 25px; width: 95%; }
             .content { padding: 60px 10px 30px; }
-            .model-container { height: 250px; margin-bottom: -20px; }
+            .model-container { height: 250px; margin-bottom: -15px; }
             .user-profile-card { padding: 20px; border-radius: 16px; }
             .stats { flex-direction: column; gap: 10px; }
             .stat-box { width: 100%; padding: 12px; display: flex; justify-content: space-between; align-items: center; text-align: right;}
             .stat-box span { margin-top: 0; font-size: 24px; }
-            .stat-box::before { width: 4px; height: 100%; top: 0; left: 0; } /* تغيير الخط ليكون عمودي على الجوال */
-            .cards-grid { grid-template-columns: 1fr; gap: 15px;} /* تكديس البطاقات فوق بعضها */
+            .stat-box::before { width: 4px; height: 100%; top: 0; left: 0; }
+            .cards-grid { grid-template-columns: 1fr; gap: 15px;}
             .page-title { font-size: 20px; }
-            .auth-tabs button { font-size: 14px; padding: 10px; }
-            input, select, textarea { padding: 12px; font-size: 13px; }
-            .btn-primary { padding: 12px; font-size: 14px; }
-            #booking-details-form { padding: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- الخلفية المحيطية الفاخرة -->
-    <div class="ambient-background">
-        <div class="glow-1"></div>
-        <div class="glow-2"></div>
-    </div>
+    <!-- الخلفية -->
+    <div class="ambient-background"><div class="glow-1"></div><div class="glow-2"></div></div>
 
-    <!-- 1. شاشة التحميل -->
+    <!-- شاشة التحميل -->
     <div id="loading-screen" class="screen active">
-        <!-- الصورة المخصصة -->
-        <img src="https://i.ibb.co/HLsjN3jq/61-20260717204755.png" alt="شعار التحميل" class="plane-animation" id="loading-logo">
-        
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="شعار التحميل" class="plane-animation" id="loading-logo">
         <div class="loading-bar"><div class="progress"></div></div>
         <h2>جاري تحضير مقصورة القيادة...</h2>
     </div>
 
-    <!-- 2. شاشة المصادقة -->
+    <!-- شاشة المصادقة -->
     <div id="auth-screen" class="screen">
         <div class="auth-container">
             <div style="text-align: center; margin-bottom: 25px;">
@@ -222,9 +191,8 @@
         </div>
     </div>
 
-    <!-- 3. لوحة التحكم والأقسام -->
+    <!-- لوحة التحكم -->
     <div id="dashboard-screen" class="screen">
-        
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
         <div class="overlay" id="menu-overlay" onclick="toggleMenu()"></div>
 
@@ -235,37 +203,37 @@
             <div class="nav-section">
                 <h4>الرئيسية</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-home')" class="active">🏠 بطاقة الصعود</a></li>
+                    <li><a onclick="switchView('view-home', this)" class="active">🏠 بطاقة الصعود</a></li>
                 </ul>
             </div>
 
             <div class="nav-section">
                 <h4>الرحلات والحجوزات</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-booking')">✈️ حجز وجهة جديدة</a></li>
-                    <li><a onclick="switchView('view-packages')">🧳 استكشاف البكجات</a></li>
-                    <li><a onclick="switchView('view-tickets')">🎫 سجل السفر والتذاكر</a></li>
+                    <li><a onclick="switchView('view-booking', this)">✈️ حجز وجهة جديدة</a></li>
+                    <li><a onclick="switchView('view-packages', this)">🧳 استكشاف البكجات</a></li>
+                    <li><a onclick="switchView('view-tickets', this)">🎫 سجل السفر والتذاكر</a></li>
                 </ul>
             </div>
             
             <div class="nav-section">
                 <h4>خدمات كبار الشخصيات</h4>
                 <ul class="nav-links">
-                    <li><a onclick="switchView('view-supervisors')">📞 طاقم الإشراف</a></li>
+                    <li><a onclick="switchView('view-supervisors', this)">📞 طاقم الإشراف</a></li>
                 </ul>
             </div>
             
             <button class="btn-primary" style="margin-top:auto; background:rgba(255,255,255,0.1); border:none; color:white;" onclick="location.reload()">تسجيل خروج آمن</button>
         </aside>
 
-        <!-- منطقة الأقسام الديناميكية -->
+        <!-- الأقسام الديناميكية -->
         <main class="content">
             
-            <!-- قسم 1: الرئيسية -->
+            <!-- الرئيسية -->
             <div id="view-home" class="view-section active">
                 <div class="model-container">
-                    <!-- اسم ملف الـ 3D الخاص بك -->
-                    <model-viewer src="earth.glb" auto-rotate camera-controls disable-zoom></model-viewer>
+                    <!-- 🔥 إضافة touch-action: pan-y للسماح بالحركة الحرة بدون تقطيع -->
+                    <model-viewer src="earth.glb" auto-rotate camera-controls disable-zoom style="touch-action: pan-y;"></model-viewer>
                 </div>
                 
                 <div class="user-profile-card">
@@ -285,22 +253,15 @@
                 </div>
             </div>
 
-            <!-- قسم 2: حجز رحلة -->
+            <!-- حجز رحلة -->
             <div id="view-booking" class="view-section">
                 <h2 class="page-title">وجهات الطيران المتاحة</h2>
-                
                 <div class="user-profile-card" style="margin-top:0; background: transparent; box-shadow: none; padding: 0; border: none;">
-                    
-                    <div class="cards-grid" id="booking-guilds-grid">
-                        <!-- فارغ -->
-                    </div>
-
-                    <div id="booking-details-form" style="display:none; background:white; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;">
+                    <div class="cards-grid" id="booking-guilds-grid"></div>
+                    <div id="booking-details-form" style="display:none; background:white; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9; padding: 20px;">
                         <h3 id="selected-guild-title" style="color:var(--navy-dark); text-align:center; border-bottom:2px dashed #E2E8F0; padding-bottom:15px; margin-top:0; font-weight:900; font-size:18px;"></h3>
-                        
                         <form onsubmit="handleBooking(event)">
                             <input type="hidden" id="book-destination">
-                            
                             <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:13px;">حدد مدة التأشيرة المطلوبة:</label>
                             <select id="book-duration" required style="margin-bottom:20px; font-weight:700;">
                                 <option value="" disabled selected>-- اختر المدة الزمنية --</option>
@@ -308,25 +269,21 @@
                                 <option value="2">يومان (48 ساعة)</option>
                                 <option value="3">ثلاثة أيام (72 ساعة)</option>
                             </select>
-                            
                             <label style="font-weight:700; color:var(--text-muted); margin-bottom:10px; display:block; font-size:13px;">متطلبات إضافية (اختياري):</label>
-                            <textarea id="book-details" rows="3" placeholder="أضف أي ملاحظات لمسؤول الرحلة..." style="margin-bottom:20px; resize:none;"></textarea>
-                            
+                            <textarea id="book-details" rows="3" placeholder="أضف أي ملاحظات..." style="margin-bottom:20px; resize:none;"></textarea>
                             <button type="submit" class="btn-primary" id="btn-book">إصدار طلب التذكرة</button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- قسم 3: البكجات -->
+            <!-- البكجات -->
             <div id="view-packages" class="view-section">
                 <h2 class="page-title">العروض والبكجات الفاخرة</h2>
-                <div class="cards-grid" id="packages-container">
-                    <!-- فارغ -->
-                </div>
+                <div class="cards-grid" id="packages-container"></div>
             </div>
 
-            <!-- قسم 4: تذاكري والعداد التنازلي -->
+            <!-- سجل السفر -->
             <div id="view-tickets" class="view-section">
                 <h2 class="page-title">سجل الرحلات والتذاكر</h2>
                 <div class="table-responsive">
@@ -339,35 +296,25 @@
                                 <th>حالة التذكرة</th>
                             </tr>
                         </thead>
-                        <tbody id="tbody-my-tickets">
-                            <!-- فارغ -->
-                        </tbody>
+                        <tbody id="tbody-my-tickets"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- قسم 5: المشرفين -->
+            <!-- المشرفين -->
             <div id="view-supervisors" class="view-section">
                 <h2 class="page-title">طاقم الإشراف والضيافة</h2>
-                <div class="cards-grid" id="supervisors-container">
-                    <!-- فارغ -->
-                </div>
+                <div class="cards-grid" id="supervisors-container"></div>
             </div>
 
         </main>
     </div>
 
-    <!-- ==========================================
-         🔴 سكريبت نسخة العرض (مفصول عن قواعد البيانات، وبدون بيانات وهمية) 🔴
-         ========================================== -->
+    <!-- السكربت -->
     <script>
         let loggedInUserPhone = "";
 
         window.addEventListener('load', () => {
-            const logo = document.getElementById('loading-logo');
-            if(logo.getAttribute('src') === "") {
-                logo.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"; 
-            }
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.remove('active');
                 document.getElementById('auth-screen').classList.add('active');
@@ -390,22 +337,20 @@
             document.getElementById('menu-overlay').classList.toggle('active');
         }
 
-        function switchView(viewId) {
+        // 🔥 تم إصلاح هذا الكود ليمنع الأخطاء عند التبديل بين القوائم
+        function switchView(viewId, element) {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
             document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
-            event.target.classList.add('active');
+            if(element) element.classList.add('active');
             toggleMenu();
         }
 
-        // 1. طلب العضوية (صوري)
         function handleSignup(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-signup');
             btn.innerText = "جاري إرسال الطلب..."; btn.disabled = true;
-
             const guild = document.getElementById('signup-guild').value;
-
             setTimeout(() => {
                 alert("تم استلام طلبك للوجهة: " + guild + " بنجاح. (نسخة العرض)");
                 document.getElementById('form-signup').reset();
@@ -414,18 +359,14 @@
             }, 800);
         }
 
-        // 2. الدخول (مفصول ويقبل أي رقم بدون بيانات وهمية)
         function handleLogin(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-login');
             const phone = document.getElementById('login-phone').value;
-
             btn.innerText = "جاري الدخول..."; btn.disabled = true;
 
             setTimeout(() => {
                 loggedInUserPhone = phone;
-
-                // تحديث الإحصائيات بأصفار أو بيانات مبدئية
                 document.getElementById('profile-nickname').innerText = "زائر (نسخة العرض)";
                 document.getElementById('profile-phone').innerText = phone;
                 document.getElementById('profile-guild').innerText = "غير محدد";
@@ -433,40 +374,30 @@
                 document.getElementById('profile-tickets').innerText = "0";
                 document.getElementById('profile-warnings').innerText = "0";
 
-                // تفريغ الأقسام
                 document.getElementById('booking-guilds-grid').innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">لا توجد وجهات متاحة حالياً.</p>';
                 document.getElementById('packages-container').innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">لا توجد عروض متاحة حالياً.</p>';
                 document.getElementById('supervisors-container').innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">لا يوجد مشرفين حالياً.</p>';
                 document.getElementById('tbody-my-tickets').innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد رحلات مجدولة حالياً.</td></tr>';
 
-                // إخفاء شاشة الدخول وإظهار لوحة التحكم
                 document.getElementById('auth-screen').classList.remove('active');
                 document.getElementById('dashboard-screen').classList.add('active');
-                
                 btn.innerText = "دخول للوحة القيادة"; btn.disabled = false;
             }, 800);
         }
 
-        // اختيار النقابة (متوقف لأن القائمة فارغة حالياً)
         function selectGuildToBook(guildName, cardElement) {
             document.querySelectorAll('.guild-card').forEach(card => card.classList.remove('selected'));
             cardElement.classList.add('selected');
-            
             document.getElementById('booking-details-form').style.display = 'block';
             document.getElementById('selected-guild-title').innerText = 'تأكيد وجهة السفر: ' + guildName;
             document.getElementById('book-destination').value = guildName;
-            
-            setTimeout(() => {
-                document.getElementById('booking-details-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+            setTimeout(() => { document.getElementById('booking-details-form').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
         }
 
-        // إرسال طلب الحجز (صوري)
         function handleBooking(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-book');
             btn.innerText = "جاري إصدار التذكرة..."; btn.disabled = true;
-
             const reqDest = document.getElementById('book-destination').value;
             const duration = document.getElementById('book-duration').value;
             const notes = document.getElementById('book-details').value;
@@ -495,12 +426,10 @@
                 document.getElementById('booking-details-form').style.display = 'none';
                 document.querySelectorAll('.guild-card').forEach(c => c.classList.remove('selected'));
                 switchView('view-tickets'); 
-                
                 btn.innerText = "إصدار طلب التذكرة"; btn.disabled = false;
             }, 600);
         }
 
-        // محرك العداد الزمني
         function startCountdowns() {
             setInterval(() => {
                 document.querySelectorAll('.countdown-timer').forEach(el => {
@@ -510,14 +439,11 @@
 
                     if (diff <= 0) {
                         el.innerHTML = "✖ انتهت صلاحية التأشيرة";
-                        el.style.color = "#EF4444";
-                        el.style.background = "#FEE2E2";
-                        el.style.borderColor = "#FCA5A5";
+                        el.style.color = "#EF4444"; el.style.background = "#FEE2E2"; el.style.borderColor = "#FCA5A5";
                     } else {
                         const h = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60)); 
                         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                         const s = Math.floor((diff % (1000 * 60)) / 1000);
-                        
                         el.innerText = `⏳ متبقي: ${h}س ${m}د ${s}ث`;
                     }
                 });
