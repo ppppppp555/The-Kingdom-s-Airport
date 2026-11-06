@@ -194,6 +194,7 @@
             <div style="text-align: center; margin-bottom: 25px;">
                 <h2 style="color: var(--navy-dark); margin: 0; font-weight: 900; font-size: 24px;">الخطوط الملكية</h2>
                 <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 14px;">بوابة المسافرين والسفراء</p>
+                <p style="color: #EF4444; font-size: 11px; margin-top: 5px; font-weight: bold;">(نسخة العرض - تخطي قاعدة البيانات)</p>
             </div>
 
             <div class="auth-tabs">
@@ -202,8 +203,8 @@
             </div>
             
             <form id="form-login" class="auth-form active" onsubmit="handleLogin(event)">
-                <input type="tel" id="login-phone" placeholder="رقم الجوال الخاص بك" required>
-                <input type="password" id="login-pass" placeholder="كلمة المرور" required>
+                <input type="tel" id="login-phone" placeholder="رقم الجوال الخاص بك (اكتب أي رقم)" required>
+                <input type="password" id="login-pass" placeholder="كلمة المرور (اكتب أي شيء)" required>
                 <button type="submit" class="btn-primary" id="btn-login">دخول للوحة القيادة</button>
             </form>
             
@@ -291,7 +292,7 @@
                 <div class="user-profile-card" style="margin-top:0; background: transparent; box-shadow: none; padding: 0; border: none;">
                     
                     <div class="cards-grid" id="booking-guilds-grid">
-                        <p style="color:var(--text-muted); text-align:center; width:100%;">جاري إعداد مدرج الهبوط...</p>
+                        <!-- فارغ -->
                     </div>
 
                     <div id="booking-details-form" style="display:none; background:white; border-radius:24px; margin-top:30px; box-shadow:0 15px 40px rgba(0,0,0,0.05); border: 1px solid #F1F5F9;">
@@ -321,7 +322,7 @@
             <div id="view-packages" class="view-section">
                 <h2 class="page-title">العروض والبكجات الفاخرة</h2>
                 <div class="cards-grid" id="packages-container">
-                    <p style="color:var(--text-muted); text-align:center; width:100%;">جاري تحميل العروض...</p>
+                    <!-- فارغ -->
                 </div>
             </div>
 
@@ -339,6 +340,7 @@
                             </tr>
                         </thead>
                         <tbody id="tbody-my-tickets">
+                            <!-- فارغ -->
                         </tbody>
                     </table>
                 </div>
@@ -348,18 +350,17 @@
             <div id="view-supervisors" class="view-section">
                 <h2 class="page-title">طاقم الإشراف والضيافة</h2>
                 <div class="cards-grid" id="supervisors-container">
+                    <!-- فارغ -->
                 </div>
             </div>
 
         </main>
     </div>
 
+    <!-- ==========================================
+         🔴 سكريبت نسخة العرض (مفصول عن قواعد البيانات، وبدون بيانات وهمية) 🔴
+         ========================================== -->
     <script>
-        // ==========================================
-        // 🔴 الرابط لقاعدة البيانات 🔴
-        // ==========================================
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO9UjqMfIQxbpFhPTSf4vwm6rbm6Rqryg7eoIPqIG4nHHQWC582BMOqe2Zly-zDiAgOA/exec";
-        
         let loggedInUserPhone = "";
 
         window.addEventListener('load', () => {
@@ -370,7 +371,7 @@
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.remove('active');
                 document.getElementById('auth-screen').classList.add('active');
-            }, 3000); 
+            }, 2000); 
             startCountdowns();
         });
 
@@ -397,170 +398,56 @@
             toggleMenu();
         }
 
-        // 1. طلب العضوية
-        async function handleSignup(e) {
+        // 1. طلب العضوية (صوري)
+        function handleSignup(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-signup');
             btn.innerText = "جاري إرسال الطلب..."; btn.disabled = true;
 
-            const name = document.getElementById('signup-name').value;
-            const phone = document.getElementById('signup-phone').value;
-            const pass = document.getElementById('signup-pass').value;
             const guild = document.getElementById('signup-guild').value;
 
-            const newUserData = [phone, pass, name, "user", guild, "pending", 0, 0, 0];
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "add", table: "Users", data: newUserData }),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-                });
-                const result = await response.json();
-                if(result.status === "success") {
-                    alert("تم استلام طلبك للوجهة: " + guild + " بنجاح. يرجى انتظار توثيق الإدارة.");
-                    document.getElementById('form-signup').reset();
-                    toggleAuth('login');
-                }
-            } catch (error) { alert("حدث خطأ في الاتصال برج المراقبة."); } 
-            finally { btn.innerText = "إرسال طلب الانتساب"; btn.disabled = false; }
+            setTimeout(() => {
+                alert("تم استلام طلبك للوجهة: " + guild + " بنجاح. (نسخة العرض)");
+                document.getElementById('form-signup').reset();
+                toggleAuth('login');
+                btn.innerText = "إرسال طلب الانتساب"; btn.disabled = false;
+            }, 800);
         }
 
-        // 2. الدخول وتوزيع البيانات
-        async function handleLogin(e) {
+        // 2. الدخول (مفصول ويقبل أي رقم بدون بيانات وهمية)
+        function handleLogin(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-login');
             const phone = document.getElementById('login-phone').value;
-            const pass = document.getElementById('login-pass').value;
 
-            btn.innerText = "جاري التحقق من الهوية..."; btn.disabled = true;
+            btn.innerText = "جاري الدخول..."; btn.disabled = true;
 
-            try {
-                const response = await fetch(SCRIPT_URL + "?admin=true");
-                const db = await response.json();
+            setTimeout(() => {
+                loggedInUserPhone = phone;
+
+                // تحديث الإحصائيات بأصفار أو بيانات مبدئية
+                document.getElementById('profile-nickname').innerText = "زائر (نسخة العرض)";
+                document.getElementById('profile-phone').innerText = phone;
+                document.getElementById('profile-guild').innerText = "غير محدد";
+                document.getElementById('profile-flights').innerText = "0";
+                document.getElementById('profile-tickets').innerText = "0";
+                document.getElementById('profile-warnings').innerText = "0";
+
+                // تفريغ الأقسام
+                document.getElementById('booking-guilds-grid').innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">لا توجد وجهات متاحة حالياً.</p>';
+                document.getElementById('packages-container').innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">لا توجد عروض متاحة حالياً.</p>';
+                document.getElementById('supervisors-container').innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">لا يوجد مشرفين حالياً.</p>';
+                document.getElementById('tbody-my-tickets').innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد رحلات مجدولة حالياً.</td></tr>';
+
+                // إخفاء شاشة الدخول وإظهار لوحة التحكم
+                document.getElementById('auth-screen').classList.remove('active');
+                document.getElementById('dashboard-screen').classList.add('active');
                 
-                let userFound = false;
-                let userData = null;
-
-                for (let i = 0; i < db.users.length; i++) {
-                    if (db.users[i][0] == phone && db.users[i][1] == pass) {
-                        userFound = true; userData = db.users[i]; break;
-                    }
-                }
-
-                if (userFound) {
-                    if (userData[5] === "pending") {
-                        alert("بطاقتك بانتظار التوثيق من قبل السلطات.");
-                    } else if (userData[5] === "rejected") {
-                        alert("عذراً، تم رفض طلبك.");
-                    } else {
-                        loggedInUserPhone = userData[0];
-
-                        // تحديث الإحصائيات
-                        document.getElementById('profile-nickname').innerText = userData[2];
-                        document.getElementById('profile-phone').innerText = userData[0];
-                        document.getElementById('profile-guild').innerText = userData[4];
-                        document.getElementById('profile-flights').innerText = userData[6] || 0;
-                        document.getElementById('profile-tickets').innerText = userData[7] || 0;
-                        document.getElementById('profile-warnings').innerText = userData[8] || 0;
-
-                        // رسم الوجهات (النقابات)
-                        const bookGuildsGrid = document.getElementById('booking-guilds-grid');
-                        bookGuildsGrid.innerHTML = '';
-                        db.guilds.forEach((guild, i) => {
-                            if(i > 0 && guild[0]) {
-                                bookGuildsGrid.innerHTML += `
-                                <div class="profile-card guild-card" onclick="selectGuildToBook('${guild[0]}', this)">
-                                    <div style="width:100%; height:120px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
-                                        <img src="${guild[1]}" style="width:100%; height:100%; object-fit:cover;" alt="${guild[0]}">
-                                    </div>
-                                    <h3 style="margin-bottom:0;">وجهة: ${guild[0]}</h3>
-                                </div>`;
-                            }
-                        });
-
-                        // رسم البكجات
-                        const pkgContainer = document.getElementById('packages-container');
-                        pkgContainer.innerHTML = '';
-                        db.packages.forEach((pkg, i) => {
-                            if (i > 0 && pkg[0]) {
-                                pkgContainer.innerHTML += `
-                                <div class="profile-card">
-                                    <div style="width:100%; height:140px; border-radius:12px; overflow:hidden; margin-bottom:15px;">
-                                        <img src="${pkg[1]}" style="width:100%; height:100%; object-fit:cover;" alt="صورة البكج">
-                                    </div>
-                                    <h3>${pkg[0]}</h3>
-                                    <p style="color:var(--text-muted); font-weight:700; font-size:13px;">${pkg[2]}</p>
-                                    <button class="btn-action" onclick="switchView('view-booking')">اطلب الآن</button>
-                                </div>`;
-                            }
-                        });
-
-                        // رسم المشرفين
-                        const supContainer = document.getElementById('supervisors-container');
-                        supContainer.innerHTML = '';
-                        db.supervisors.forEach((sup, i) => {
-                            if (i > 0 && sup[0]) {
-                                supContainer.innerHTML += `
-                                <div class="profile-card">
-                                    <div class="avatar-placeholder"><img src="${sup[2]}" alt="المشرف"></div>
-                                    <h3>${sup[1]}</h3>
-                                    <p style="font-size:13px;">${sup[3]}</p>
-                                    <a href="https://wa.me/${sup[0]}" target="_blank" class="btn-action">محادثة واتساب</a>
-                                </div>`;
-                            }
-                        });
-
-                        // رسم التذاكر والعدادات
-                        const tixContainer = document.getElementById('tbody-my-tickets');
-                        tixContainer.innerHTML = '';
-                        let hasTickets = false;
-                        
-                        db.requests.forEach((req, i) => {
-                            if (i > 0 && req[1] == loggedInUserPhone) {
-                                hasTickets = true;
-                                let statusClass = req[4] === 'pending' ? 'pending' : (req[4] === 'active' ? 'active' : 'rejected');
-                                let statusText = req[4] === 'pending' ? 'قيد المراجعة' : (req[4] === 'active' ? 'مصرح بالصعود' : 'مرفوض');
-                                
-                                let timerHTML = '';
-                                if (req[4] === 'active') {
-                                    let days = 1;
-                                    const match = req[3].match(/المدة:\s*(\d+)/);
-                                    if(match) days = parseInt(match[1]);
-
-                                    let endTime = localStorage.getItem('ticket_end_' + req[0]);
-                                    if (!endTime) {
-                                        endTime = Date.now() + (days * 24 * 60 * 60 * 1000);
-                                        localStorage.setItem('ticket_end_' + req[0], endTime);
-                                    }
-                                    timerHTML = `<br><span class="countdown-timer" data-endtime="${endTime}">جاري المعايرة...</span>`;
-                                }
-
-                                tixContainer.innerHTML += `
-                                <tr>
-                                    <td style="color:var(--navy-dark); font-weight:900;">${req[0]}</td>
-                                    <td><strong>${req[2]}</strong></td>
-                                    <td>${req[3]}</td>
-                                    <td>
-                                        <span class="badge bg-${statusClass}">${statusText}</span>
-                                        ${timerHTML}
-                                    </td>
-                                </tr>`;
-                            }
-                        });
-                        if(!hasTickets) tixContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد رحلات مجدولة حالياً.</td></tr>';
-
-                        document.getElementById('auth-screen').classList.remove('active');
-                        document.getElementById('dashboard-screen').classList.add('active');
-                    }
-                } else {
-                    alert("عفواً، بيانات الوصول غير صحيحة.");
-                }
-            } catch (error) { alert("حدث خطأ في الاتصال بالشبكة."); } 
-            finally { btn.innerText = "دخول للوحة القيادة"; btn.disabled = false; }
+                btn.innerText = "دخول للوحة القيادة"; btn.disabled = false;
+            }, 800);
         }
 
-        // اختيار النقابة للحجز
+        // اختيار النقابة (متوقف لأن القائمة فارغة حالياً)
         function selectGuildToBook(guildName, cardElement) {
             document.querySelectorAll('.guild-card').forEach(card => card.classList.remove('selected'));
             cardElement.classList.add('selected');
@@ -574,8 +461,8 @@
             }, 100);
         }
 
-        // إرسال طلب الحجز
-        async function handleBooking(e) {
+        // إرسال طلب الحجز (صوري)
+        function handleBooking(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-book');
             btn.innerText = "جاري إصدار التذكرة..."; btn.disabled = true;
@@ -584,29 +471,36 @@
             const duration = document.getElementById('book-duration').value;
             const notes = document.getElementById('book-details').value;
             
-            const compiledDetails = `المدة: ${duration} أيام | التفاصيل: ${notes || 'لا يوجد'}`;
-            const randomId = "TK-" + Math.floor(Math.random() * 90000 + 10000); 
-            const newRequestData = [randomId, loggedInUserPhone, reqDest, compiledDetails, "pending"];
+            setTimeout(() => {
+                const randomId = "TK-" + Math.floor(Math.random() * 90000 + 10000); 
+                const endTime = Date.now() + (parseInt(duration) * 24 * 60 * 60 * 1000);
+                localStorage.setItem('ticket_end_' + randomId, endTime);
 
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "add", table: "Requests", data: newRequestData }),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-                });
-                const result = await response.json();
-                if(result.status === "success") {
-                    alert("تم إرسال طلب التذكرة بنجاح! الرمز المرجعي: " + randomId + "\nسيبدأ العداد فور تصديق الإدارة.");
-                    document.getElementById('book-details').value = '';
-                    document.getElementById('booking-details-form').style.display = 'none';
-                    document.querySelectorAll('.guild-card').forEach(c => c.classList.remove('selected'));
-                    switchView('view-tickets'); 
-                }
-            } catch (error) { alert("فشل الإرسال."); } 
-            finally { btn.innerText = "إصدار طلب التذكرة"; btn.disabled = false; }
+                const tixContainer = document.getElementById('tbody-my-tickets');
+                if(tixContainer.innerHTML.includes("لا توجد رحلات")) tixContainer.innerHTML = '';
+
+                tixContainer.innerHTML += `
+                <tr>
+                    <td style="color:var(--navy-dark); font-weight:900;">${randomId}</td>
+                    <td><strong>${reqDest}</strong></td>
+                    <td>المدة: ${duration} أيام | التفاصيل: ${notes || 'لا يوجد'}</td>
+                    <td>
+                        <span class="badge bg-active">مصرح بالصعود (جديد)</span>
+                        <br><span class="countdown-timer" data-endtime="${endTime}">جاري المعايرة...</span>
+                    </td>
+                </tr>`;
+
+                alert("تم إصدار طلب التذكرة بنجاح للعرض! الرمز المرجعي: " + randomId);
+                document.getElementById('book-details').value = '';
+                document.getElementById('booking-details-form').style.display = 'none';
+                document.querySelectorAll('.guild-card').forEach(c => c.classList.remove('selected'));
+                switchView('view-tickets'); 
+                
+                btn.innerText = "إصدار طلب التذكرة"; btn.disabled = false;
+            }, 600);
         }
 
-        // محرك العداد الزمني (Live Countdown)
+        // محرك العداد الزمني
         function startCountdowns() {
             setInterval(() => {
                 document.querySelectorAll('.countdown-timer').forEach(el => {
